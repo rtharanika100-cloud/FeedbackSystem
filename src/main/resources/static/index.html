@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback & Escalation Portal</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="glass-bg-glows">
+        <div class="glow-1"></div>
+        <div class="glow-2"></div>
+    </div>
+
+    <div class="app-container">
+        <!-- Navigation Header -->
+        <header class="app-header">
+            <div class="brand">
+                <i class="fa-solid fa-arrows-spin logo-icon"></i>
+                <div class="brand-text">
+                    <h1>ResolveFlow</h1>
+                    <p>Feedback & Escalation Portal</p>
+                </div>
+            </div>
+            <nav class="nav-controls">
+                <button id="btn-customer-view" class="nav-btn active">
+                    <i class="fa-solid fa-user"></i> Customer Portal
+                </button>
+                <button id="btn-staff-view" class="nav-btn">
+                    <i class="fa-solid fa-user-shield"></i> Staff Workspace
+                </button>
+            </nav>
+            <div class="status-indicator">
+                <span class="pulse-dot"></span>
+                <span class="status-label">System Active</span>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+            
+            <!-- CUSTOMER VIEW SECTION -->
+            <section id="customer-view" class="view-section active">
+                <div class="grid-2-col">
+                    <!-- Left: Submit Feedback Form -->
+                    <div class="card glass-card form-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-pen-to-square"></i> Submit New Feedback</h2>
+                            <p>Let us know how we can improve or tell us about your issue.</p>
+                        </div>
+                        <form id="feedback-form" class="standard-form">
+                            <div class="form-group">
+                                <label for="fb-title">Subject / Title</label>
+                                <input type="text" id="fb-title" placeholder="Brief summary of your feedback..." required maxlength="150">
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label for="fb-category">Category</label>
+                                    <select id="fb-category" required>
+                                        <option value="TECHNICAL">Technical Issue</option>
+                                        <option value="BILLING">Billing & Payment</option>
+                                        <option value="PRODUCT_FEEDBACK">Product Feedback</option>
+                                        <option value="GENERAL_INQUIRY">General Inquiry</option>
+                                        <option value="OTHER">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="fb-priority">Severity / Priority</label>
+                                    <select id="fb-priority" required>
+                                        <option value="LOW">Low (General suggestion)</option>
+                                        <option value="MEDIUM" selected>Medium (Standard issue)</option>
+                                        <option value="HIGH">High (Disruptive issue)</option>
+                                        <option value="URGENT">Urgent (Critical blocker)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fb-description">Detailed Description</label>
+                                <textarea id="fb-description" rows="5" placeholder="Please explain your issue in detail so we can reproduce or understand it..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary submit-btn">
+                                <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Right: Customer Tickets List -->
+                    <div class="card glass-card list-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-receipt"></i> Your Submitted Tickets</h2>
+                            <p>Track progress and history of your feedback.</p>
+                        </div>
+                        <div class="ticket-list-wrapper">
+                            <div id="customer-tickets-list" class="tickets-container">
+                                <!-- Dynamic tickets will go here -->
+                                <div class="empty-state">
+                                    <i class="fa-solid fa-inbox empty-icon"></i>
+                                    <p>No feedback submitted yet. Use the form on the left to start.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STAFF WORKSPACE SECTION -->
+            <section id="staff-view" class="view-section">
+                <div class="staff-dashboard-grid">
+                    
+                    <!-- Left: All Active Tickets for Staff -->
+                    <div class="card glass-card staff-list-card">
+                        <div class="card-header flex-header">
+                            <div>
+                                <h2><i class="fa-solid fa-list-check"></i> Ticket Queue</h2>
+                                <p>Review and assign incoming complaints.</p>
+                            </div>
+                            <div class="filter-controls">
+                                <select id="staff-filter-status" class="select-sm">
+                                    <option value="ALL">All Statuses</option>
+                                    <option value="CREATED">Created</option>
+                                    <option value="UNDER_REVIEW">Under Review</option>
+                                    <option value="ASSIGNED">Assigned</option>
+                                    <option value="INVESTIGATING">Investigating</option>
+                                    <option value="RESOLVED">Resolved</option>
+                                    <option value="CLOSED">Closed</option>
+                                    <option value="REOPENED">Reopened</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="standard-table" id="staff-tickets-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Subject</th>
+                                        <th>Category</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Assignee</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="staff-tickets-tbody">
+                                    <!-- Dynamic rows will go here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Detailed Ticket Inspection & Audit Timeline -->
+                    <div class="card glass-card detail-card" id="detail-panel">
+                        <div class="empty-detail-state" id="empty-detail-msg">
+                            <i class="fa-solid fa-circle-info detail-icon"></i>
+                            <h3>Select a ticket from the queue to inspect details, assign staff, and update workflow status.</h3>
+                        </div>
+
+                        <div id="detail-content" class="hidden">
+                            <!-- Header Info -->
+                            <div class="detail-header">
+                                <div class="detail-id-section">
+                                    <span class="detail-id" id="detail-ticket-id">#TKT-1</span>
+                                    <span class="badge" id="detail-ticket-status">CREATED</span>
+                                </div>
+                                <h2 id="detail-ticket-title">Billing issue regarding invoice</h2>
+                                <div class="detail-meta">
+                                    <span><i class="fa-solid fa-folder"></i> <strong id="detail-ticket-category">BILLING</strong></span>
+                                    <span><i class="fa-solid fa-circle-exclamation"></i> <strong id="detail-ticket-priority">HIGH</strong></span>
+                                    <span><i class="fa-solid fa-clock"></i> <strong id="detail-ticket-date">Just now</strong></span>
+                                </div>
+                            </div>
+
+                            <hr class="separator">
+
+                            <!-- Body Description -->
+                            <div class="detail-body">
+                                <h3>Description</h3>
+                                <p id="detail-ticket-desc">I was double charged on my invoice. Please check.</p>
+                            </div>
+
+                            <hr class="separator">
+
+                            <!-- Workflow Action Controls -->
+                            <div class="detail-actions">
+                                <h3>Workflow Operations</h3>
+                                <div class="action-grid">
+                                    <div class="form-group">
+                                        <label for="action-assignee">Assign Agent / Staff</label>
+                                        <select id="action-assignee">
+                                            <option value="">Unassigned</option>
+                                            <option value="Agent Smith">Agent Smith (Technical)</option>
+                                            <option value="Jane Doe">Jane Doe (Billing)</option>
+                                            <option value="Supervisor Johnson">Supervisor Johnson (Manager)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="action-status">Transition Status</label>
+                                        <select id="action-status">
+                                            <option value="CREATED">Created</option>
+                                            <option value="UNDER_REVIEW">Under Review</option>
+                                            <option value="ASSIGNED">Assigned</option>
+                                            <option value="INVESTIGATING">Investigating</option>
+                                            <option value="RESOLVED">Resolved</option>
+                                            <option value="CLOSED">Closed</option>
+                                            <option value="REOPENED">Reopened</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="action-notes">Internal Logs / Updates Notes</label>
+                                    <textarea id="action-notes" rows="2" placeholder="Explain the changes or actions taken..."></textarea>
+                                </div>
+                                <div class="action-button-bar">
+                                    <button id="btn-update-ticket" class="btn btn-primary btn-full">
+                                        <i class="fa-solid fa-floppy-disk"></i> Save Changes & Log History
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Customer Resolution Verify (Shows in Staff View as Customer Actions for Mock Testing) -->
+                            <div id="customer-verify-box" class="customer-verify-panel hidden">
+                                <h4><i class="fa-solid fa-user-check"></i> Customer Feedback Resolution Check</h4>
+                                <p>As a customer, is this issue fixed to your satisfaction?</p>
+                                <div class="verify-buttons">
+                                    <button id="btn-customer-fixed" class="btn btn-success">
+                                        <i class="fa-solid fa-check"></i> Yes, Fix Confirmed (Close Ticket)
+                                    </button>
+                                    <button id="btn-customer-reopen" class="btn btn-danger">
+                                        <i class="fa-solid fa-arrow-rotate-left"></i> No, Reopen Ticket
+                                    </button>
+                                </div>
+                            </div>
+
+                            <hr class="separator">
+
+                            <!-- Audit Timeline -->
+                            <div class="detail-timeline">
+                                <h3><i class="fa-solid fa-clock-rotate-left"></i> Audit & Escalation Log Timeline</h3>
+                                <div class="timeline-container" id="timeline-list">
+                                    <!-- Dynamic logs go here -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+    </div>
+</body>
+</html>

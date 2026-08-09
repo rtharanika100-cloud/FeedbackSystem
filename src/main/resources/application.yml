@@ -2,9 +2,9 @@ spring:
   application:
     name: feedback-workflow
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/feedback_db}
+    url: ${DATABASE_URL:jdbc:postgresql://db.akkskcrvczejklbshmsc.supabase.co:5432/postgres}
     username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD:postgres}
+    password: ${SUPABASE_SECRET_KEY:your_supabase_secret_key_here}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -16,4 +16,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: 8080
+  port: ${PORT:3000}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:your_jwt_secret_here_must_be_at_least_256_bits_long_for_security}
+
+

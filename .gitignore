@@ -29,3 +29,7 @@ target/
 *.log
 .DS_Store
 Thumbs.db
+
+## Local settings
+src/main/resources/application-local.yml
+

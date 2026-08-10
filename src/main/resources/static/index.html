@@ -37,9 +37,19 @@
                     <i class="fa-solid fa-user-shield"></i> Staff Workspace
                 </button>
             </nav>
-            <div class="status-indicator">
-                <span class="pulse-dot"></span>
-                <span class="status-label">System Active</span>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span class="status-label">System Active</span>
+                </div>
+                <div class="user-profile-widget" id="user-profile-widget">
+                    <i class="fa-solid fa-circle-user"></i>
+                    <span id="user-display-name">Guest</span>
+                    <span id="user-display-role" class="user-role-badge">CUSTOMER</span>
+                    <button id="btn-logout" class="btn-logout" title="Log Out">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -258,6 +268,64 @@
 
         </main>
     </div>
+
+    <!-- Authentication Overlay -->
+    <div id="auth-modal" class="auth-overlay">
+        <div class="auth-card glass-card animate-fade-in">
+            <div class="auth-header">
+                <i class="fa-solid fa-arrows-spin logo-icon auth-logo-icon"></i>
+                <h2>ResolveFlow</h2>
+                <p id="auth-subtitle">Login to access your workspace</p>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="login-form" class="standard-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn btn-primary submit-btn">
+                    <i class="fa-solid fa-right-to-bracket"></i> Log In
+                </button>
+                <p class="auth-toggle">Don't have an account? <span id="toggle-to-register">Register here</span></p>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="standard-form hidden">
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" placeholder="Choose a username" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email Address</label>
+                    <input type="email" id="register-email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="Create a strong password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-role">System Role</label>
+                    <select id="register-role" required>
+                        <option value="CUSTOMER">Customer / Reporter</option>
+                        <option value="AGENT">Support Agent</option>
+                        <option value="SUPERVISOR">Supervisor</option>
+                        <option value="ADMIN">System Administrator</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success submit-btn">
+                    <i class="fa-solid fa-user-plus"></i> Create Account
+                </button>
+                <p class="auth-toggle">Already have an account? <span id="toggle-to-login">Log in here</span></p>
+            </form>
+            <div id="auth-error-message" class="auth-error hidden"></div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>

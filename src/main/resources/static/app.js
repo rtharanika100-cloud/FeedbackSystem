@@ -7,8 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
         tickets: JSON.parse(localStorage.getItem('resolveflow_tickets')) || [],
         selectedTicketId: null,
         currentUser: {
-            username: "Customer Alice",
-            role: "CUSTOMER"
+            username: localStorage.getItem('resolveflow_username') || null,
+            role: localStorage.getItem('resolveflow_role') || null,
+            token: localStorage.getItem('resolveflow_token') || null
         }
     };
 
@@ -115,18 +116,25 @@ document.addEventListener('DOMContentLoaded', () => {
         btnStaffView.classList.remove('active');
         customerView.classList.add('active');
         staffView.classList.remove('active');
-        state.currentUser = { username: "Customer Alice", role: "CUSTOMER" };
         state.selectedTicketId = null;
         updateDetailPanel();
         renderCustomerTickets();
     });
 
     btnStaffView.addEventListener('click', () => {
+        if (!state.currentUser.token) {
+            showToast("Please log in first!");
+            showAuthModal();
+            return;
+        }
+        if (state.currentUser.role === 'CUSTOMER') {
+            showToast("Access Denied: Customers cannot access Staff Workspace!");
+            return;
+        }
         btnStaffView.classList.add('active');
         btnCustomerView.classList.remove('active');
         staffView.classList.add('active');
         customerView.classList.remove('active');
-        state.currentUser = { username: "Supervisor Johnson", role: "SUPERVISOR" };
         state.selectedTicketId = null;
         updateDetailPanel();
         renderStaffTickets();
@@ -540,7 +548,176 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(toastStyle);
 
-    // Initial Render
-    renderCustomerTickets();
+    // ==========================================
+    // Authentication & Session Management
+    // ==========================================
+    const authModal = document.getElementById('auth-modal');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+    const toggleToRegister = document.getElementById('toggle-to-register');
+    const toggleToLogin = document.getElementById('toggle-to-login');
+    const authErrorMsg = document.getElementById('auth-error-message');
+    const authSubtitle = document.getElementById('auth-subtitle');
+    
+    const userDisplayName = document.getElementById('user-display-name');
+    const userDisplayRole = document.getElementById('user-display-role');
+    const btnLogout = document.getElementById('btn-logout');
+
+    function showAuthModal() {
+        authModal.classList.remove('hidden');
+        authModal.style.display = 'flex';
+        loginForm.reset();
+        registerForm.reset();
+        authErrorMsg.classList.add('hidden');
+        showLoginForm();
+    }
+
+    function hideAuthModal() {
+        authModal.classList.add('hidden');
+        authModal.style.display = 'none';
+    }
+
+    function showLoginForm() {
+        loginForm.classList.remove('hidden');
+        registerForm.classList.add('hidden');
+        authSubtitle.textContent = "Login to access your workspace";
+    }
+
+    function showRegisterForm() {
+        registerForm.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        authSubtitle.textContent = "Create an account to submit or manage feedback";
+    }
+
+    toggleToRegister.addEventListener('click', showRegisterForm);
+    toggleToLogin.addEventListener('click', showLoginForm);
+
+    function updateHeaderUI() {
+        if (state.currentUser.token) {
+            userDisplayName.textContent = state.currentUser.username;
+            userDisplayRole.textContent = state.currentUser.role;
+            userDisplayRole.className = `user-role-badge role-${state.currentUser.role.toLowerCase()}`;
+            btnLogout.classList.remove('hidden');
+            
+            if (state.currentUser.role === 'CUSTOMER') {
+                btnStaffView.style.opacity = '0.5';
+                btnStaffView.title = 'Access Denied: Only support staff can enter this workspace';
+            } else {
+                btnStaffView.style.opacity = '1';
+                btnStaffView.removeAttribute('title');
+            }
+        } else {
+            userDisplayName.textContent = "Guest";
+            userDisplayRole.textContent = "GUEST";
+            userDisplayRole.className = "user-role-badge";
+            btnLogout.classList.add('hidden');
+        }
+    }
+
+    // Handle Login
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        authErrorMsg.classList.add('hidden');
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (!response.ok) {
+                const errMsg = await response.text();
+                throw new Error(errMsg || "Invalid credentials. Please try again.");
+            }
+
+            const data = await response.json();
+            loginSession(data);
+        } catch (error) {
+            authErrorMsg.textContent = error.message;
+            authErrorMsg.classList.remove('hidden');
+        }
+    });
+
+    // Handle Register
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        authErrorMsg.classList.add('hidden');
+        const username = document.getElementById('register-username').value.trim();
+        const email = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value;
+        const role = document.getElementById('register-role').value;
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password, role })
+            });
+
+            if (!response.ok) {
+                const errMsg = await response.text();
+                throw new Error(errMsg || "Registration failed. Try a different username/email.");
+            }
+
+            const data = await response.json();
+            loginSession(data);
+        } catch (error) {
+            authErrorMsg.textContent = error.message;
+            authErrorMsg.classList.remove('hidden');
+        }
+    });
+
+    function loginSession(data) {
+        state.currentUser = {
+            username: data.username,
+            role: data.role,
+            token: data.token
+        };
+        localStorage.setItem('resolveflow_username', data.username);
+        localStorage.setItem('resolveflow_role', data.role);
+        localStorage.setItem('resolveflow_token', data.token);
+
+        hideAuthModal();
+        updateHeaderUI();
+        showToast(`Welcome back, ${data.username}!`);
+
+        if (data.role === 'CUSTOMER') {
+            btnCustomerView.click();
+        } else {
+            btnStaffView.click();
+        }
+    }
+
+    btnLogout.addEventListener('click', () => {
+        state.currentUser = { username: null, role: null, token: null };
+        localStorage.removeItem('resolveflow_username');
+        localStorage.removeItem('resolveflow_role');
+        localStorage.removeItem('resolveflow_token');
+        updateHeaderUI();
+        showAuthModal();
+        showToast("Logged out successfully.");
+    });
+
+    // Initialize application view state
+    function initApp() {
+        if (state.currentUser.token) {
+            hideAuthModal();
+            updateHeaderUI();
+            if (state.currentUser.role === 'CUSTOMER') {
+                btnCustomerView.click();
+            } else {
+                btnStaffView.click();
+            }
+        } else {
+            showAuthModal();
+            updateHeaderUI();
+            renderCustomerTickets();
+        }
+    }
+
+    initApp();
 
 });

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 /* Premium Razorpay Light Theme Design System */
 
 :root {
@@ -893,3 +895,95 @@ input:focus, select:focus, textarea:focus {
         grid-template-columns: 1fr;
     }
 }
+
+/* Pixelated Footer & Retro Animations */
+.pixel-footer {
+    background-color: #0b1120;
+    color: #94a3b8;
+    padding: 40px 24px;
+    border-top: 4px solid var(--primary);
+    margin-top: 64px;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+    image-rendering: pixelated;
+}
+
+.pixel-footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pixel-anim-wrapper {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.pixel-alien {
+    display: block;
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    /* Retro space invader drawing using box shadow pixels */
+    box-shadow: 
+        6px 0px var(--primary), 16px 0px var(--primary),
+        8px 2px var(--primary), 14px 2px var(--primary),
+        8px 4px var(--primary), 10px 4px var(--primary), 12px 4px var(--primary), 14px 4px var(--primary),
+        4px 6px var(--primary), 6px 6px var(--primary), 10px 6px var(--primary), 12px 6px var(--primary), 16px 6px var(--primary), 18px 6px var(--primary),
+        0px 8px var(--primary), 2px 8px var(--primary), 4px 8px var(--primary), 6px 8px var(--primary), 8px 8px var(--primary), 10px 8px var(--primary), 12px 8px var(--primary), 14px 8px var(--primary), 16px 8px var(--primary), 18px 8px var(--primary), 20px 8px var(--primary), 22px 8px var(--primary),
+        0px 10px var(--primary), 4px 10px var(--primary), 18px 10px var(--primary), 22px 10px var(--primary),
+        0px 12px var(--primary), 22px 12px var(--primary),
+        4px 14px var(--primary), 6px 14px var(--primary), 16px 14px var(--primary), 18px 14px var(--primary);
+    animation: wiggle-alien 1s steps(2) infinite alternate;
+}
+
+.pixel-heart {
+    display: inline-block;
+    width: 2px;
+    height: 2px;
+    background: transparent;
+    box-shadow: 
+        2px 0px var(--danger), 4px 0px var(--danger), 8px 0px var(--danger), 10px 0px var(--danger),
+        0px 2px var(--danger), 2px 2px var(--danger), 4px 2px var(--danger), 6px 2px var(--danger), 8px 2px var(--danger), 10px 2px var(--danger), 12px 2px var(--danger),
+        0px 4px var(--danger), 2px 4px var(--danger), 4px 4px var(--danger), 6px 4px var(--danger), 8px 4px var(--danger), 10px 4px var(--danger), 12px 4px var(--danger),
+        2px 6px var(--danger), 4px 6px var(--danger), 6px 6px var(--danger), 8px 6px var(--danger), 10px 6px var(--danger),
+        4px 8px var(--danger), 6px 8px var(--danger), 8px 8px var(--danger),
+        6px 10px var(--danger);
+    animation: pixel-heartbeat 0.8s steps(2) infinite;
+    margin: 0 10px;
+}
+
+.designer-name {
+    color: #38bdf8;
+    text-shadow: 2px 2px 0px rgba(56, 189, 248, 0.1);
+}
+
+.pixel-text {
+    font-size: 8px;
+    letter-spacing: 1px;
+    line-height: 2;
+    color: #e2e8f0;
+}
+
+.pixel-subtext {
+    font-size: 6px;
+    letter-spacing: 0.5px;
+    color: #64748b;
+    margin-top: 16px;
+}
+
+@keyframes wiggle-alien {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-4px) rotate(3deg); }
+}
+
+@keyframes pixel-heartbeat {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.15); }
+}
+

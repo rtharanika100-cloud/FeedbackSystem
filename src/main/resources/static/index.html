@@ -3,67 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feedback & Escalation Portal</title>
+    <title>ResolveFlow | Feedback & Escalation System</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom Style Sheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="glass-bg-glows">
-        <div class="glow-1"></div>
-        <div class="glow-2"></div>
+
+    <!-- Razorpay-style Top Promo/Trust Banner -->
+    <div class="top-promo-bar">
+        <span class="promo-badge">NEW</span>
+        <p>Accepting Customer Feedback Globally. Fast ticket escalations, auto-assignments, and real-time timeline tracking.</p>
+        <a href="#hero-cta" class="promo-link">Learn More <i class="fa-solid fa-arrow-right"></i></a>
     </div>
 
-    <div class="app-container">
-        <!-- Navigation Header -->
-        <header class="app-header">
-            <div class="brand">
+    <!-- Main Navigation Bar -->
+    <header class="main-navbar">
+        <div class="nav-container">
+            <div class="brand" id="brand-home">
                 <i class="fa-solid fa-arrows-spin logo-icon"></i>
-                <div class="brand-text">
-                    <h1>ResolveFlow</h1>
-                    <p>Feedback & Escalation Portal</p>
-                </div>
+                <span class="brand-name">ResolveFlow</span>
             </div>
-            <nav class="nav-controls">
-                <button id="btn-customer-view" class="nav-btn active">
-                    <i class="fa-solid fa-user"></i> Customer Portal
-                </button>
-                <button id="btn-staff-view" class="nav-btn">
-                    <i class="fa-solid fa-user-shield"></i> Staff Workspace
-                </button>
+            
+            <nav class="nav-links">
+                <a href="#" id="link-customer" class="nav-link active">Customer Portal</a>
+                <a href="#" id="link-staff" class="nav-link">Staff Workspace</a>
+                <a href="/api/health" target="_blank" class="nav-link">System Health</a>
             </nav>
-            <div class="header-right">
-                <div class="status-indicator">
-                    <span class="pulse-dot"></span>
-                    <span class="status-label">System Active</span>
+
+            <div class="nav-actions" id="nav-auth-actions">
+                <button id="btn-login-trigger" class="btn-text">Login</button>
+                <button id="btn-signup-trigger" class="btn btn-blue">Sign Up</button>
+            </div>
+            <div class="nav-actions hidden" id="nav-user-actions">
+                <span class="user-badge"><i class="fa-solid fa-user-circle"></i> <span id="current-user-name">User</span></span>
+                <button id="btn-logout" class="btn btn-outline btn-sm">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Container -->
+    <div class="app-wrapper">
+
+        <!-- Hero Section (Razorpay Showcase) -->
+        <section class="hero-section" id="hero-cta">
+            <div class="hero-content">
+                <h1 class="hero-title">This feedback season get <span class="text-blue">ResolveFlow for FREE*</span></h1>
+                <p class="hero-subtitle">The ultimate Customer Feedback & Escalation System. Categorize, prioritize, assign staff, and track resolution timelines instantly with zero platform fees.</p>
+                <div class="hero-buttons">
+                    <button id="hero-btn-submit" class="btn btn-blue btn-lg">Submit Feedback Now</button>
+                    <button id="hero-btn-workspace" class="btn btn-outline btn-lg">Access Staff Queue</button>
                 </div>
-                <div class="user-profile-widget" id="user-profile-widget">
-                    <i class="fa-solid fa-circle-user"></i>
-                    <span id="user-display-name">Guest</span>
-                    <span id="user-display-role" class="user-role-badge">CUSTOMER</span>
-                    <button id="btn-logout" class="btn-logout" title="Log Out">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
+                <div class="hero-labels">
+                    <span><i class="fa-solid fa-circle-check"></i> Ticket Auditing</span>
+                    <span><i class="fa-solid fa-circle-check"></i> Automatic Escalation</span>
+                    <span><i class="fa-solid fa-circle-check"></i> JWT Secured</span>
                 </div>
             </div>
-        </header>
+            <div class="hero-showcase">
+                <div class="showcase-card">
+                    <div class="showcase-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="showcase-title">Workflow Status Simulator</span>
+                    </div>
+                    <div class="showcase-body">
+                        <div class="mock-flow-step done">
+                            <i class="fa-solid fa-circle-check icon-done"></i>
+                            <div class="step-txt">
+                                <h4>Feedback Created</h4>
+                                <p>Submitted by Customer</p>
+                            </div>
+                        </div>
+                        <div class="mock-flow-step active">
+                            <span class="step-num">2</span>
+                            <div class="step-txt">
+                                <h4>Under Review & Assignment</h4>
+                                <p>Assigned to technical agents</p>
+                            </div>
+                        </div>
+                        <div class="mock-flow-step pending">
+                            <span class="step-num">3</span>
+                            <div class="step-txt">
+                                <h4>Investigation & Resolution</h4>
+                                <p>Fixed and confirmed by customer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- Main Workspace -->
-        <main class="workspace">
+        <main class="workspace-area">
             
-            <!-- CUSTOMER VIEW SECTION -->
+            <!-- CUSTOMER PORTAL VIEW -->
             <section id="customer-view" class="view-section active">
-                <div class="grid-2-col">
-                    <!-- Left: Submit Feedback Form -->
-                    <div class="card glass-card form-card">
+                <div class="workspace-grid">
+                    <!-- Form Card -->
+                    <div class="card form-card">
                         <div class="card-header">
-                            <h2><i class="fa-solid fa-pen-to-square"></i> Submit New Feedback</h2>
-                            <p>Let us know how we can improve or tell us about your issue.</p>
+                            <h2>Submit New Feedback</h2>
+                            <p>Tell us how we can help. Your issue will be assigned and resolved by our staff.</p>
                         </div>
                         <form id="feedback-form" class="standard-form">
                             <div class="form-group">
@@ -85,37 +130,36 @@
                                 <div class="form-group">
                                     <label for="fb-priority">Severity / Priority</label>
                                     <select id="fb-priority" required>
-                                        <option value="LOW">Low (General suggestion)</option>
-                                        <option value="MEDIUM" selected>Medium (Standard issue)</option>
-                                        <option value="HIGH">High (Disruptive issue)</option>
-                                        <option value="URGENT">Urgent (Critical blocker)</option>
+                                        <option value="LOW">Low (Suggestion)</option>
+                                        <option value="MEDIUM" selected>Medium (Standard)</option>
+                                        <option value="HIGH">High (Disruptive)</option>
+                                        <option value="URGENT">Urgent (Blocker)</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="fb-description">Detailed Description</label>
-                                <textarea id="fb-description" rows="5" placeholder="Please explain your issue in detail so we can reproduce or understand it..." required></textarea>
+                                <textarea id="fb-description" rows="5" placeholder="Explain the issue in detail so we can investigate..." required></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-primary submit-btn">
+                            <button type="submit" class="btn btn-blue submit-btn">
                                 <i class="fa-solid fa-paper-plane"></i> Submit Feedback
                             </button>
                         </form>
                     </div>
 
-                    <!-- Right: Customer Tickets List -->
-                    <div class="card glass-card list-card">
+                    <!-- List Card -->
+                    <div class="card list-card">
                         <div class="card-header">
-                            <h2><i class="fa-solid fa-receipt"></i> Your Submitted Tickets</h2>
-                            <p>Track progress and history of your feedback.</p>
+                            <h2>Your Submitted Tickets</h2>
+                            <p>Track progress and confirm resolutions below.</p>
                         </div>
                         <div class="ticket-list-wrapper">
                             <div id="customer-tickets-list" class="tickets-container">
-                                <!-- Dynamic tickets will go here -->
                                 <div class="empty-state">
                                     <i class="fa-solid fa-inbox empty-icon"></i>
-                                    <p>No feedback submitted yet. Use the form on the left to start.</p>
+                                    <p>No feedback tickets submitted yet. Use the form on the left to start.</p>
                                 </div>
                             </div>
                         </div>
@@ -123,16 +167,16 @@
                 </div>
             </section>
 
-            <!-- STAFF WORKSPACE SECTION -->
+            <!-- STAFF WORKSPACE VIEW -->
             <section id="staff-view" class="view-section">
                 <div class="staff-dashboard-grid">
                     
-                    <!-- Left: All Active Tickets for Staff -->
-                    <div class="card glass-card staff-list-card">
+                    <!-- Ticket Queue Table -->
+                    <div class="card staff-list-card">
                         <div class="card-header flex-header">
                             <div>
-                                <h2><i class="fa-solid fa-list-check"></i> Ticket Queue</h2>
-                                <p>Review and assign incoming complaints.</p>
+                                <h2>Active Ticket Queue</h2>
+                                <p>Manage, assign, and escalate feedback.</p>
                             </div>
                             <div class="filter-controls">
                                 <select id="staff-filter-status" class="select-sm">
@@ -167,15 +211,14 @@
                         </div>
                     </div>
 
-                    <!-- Right: Detailed Ticket Inspection & Audit Timeline -->
-                    <div class="card glass-card detail-card" id="detail-panel">
+                    <!-- Inspection Details Panel -->
+                    <div class="card detail-card" id="detail-panel">
                         <div class="empty-detail-state" id="empty-detail-msg">
                             <i class="fa-solid fa-circle-info detail-icon"></i>
-                            <h3>Select a ticket from the queue to inspect details, assign staff, and update workflow status.</h3>
+                            <h3>Select a ticket from the queue to view full description, assign staff, and update workflow status.</h3>
                         </div>
 
                         <div id="detail-content" class="hidden">
-                            <!-- Header Info -->
                             <div class="detail-header">
                                 <div class="detail-id-section">
                                     <span class="detail-id" id="detail-ticket-id">#TKT-1</span>
@@ -184,14 +227,13 @@
                                 <h2 id="detail-ticket-title">Billing issue regarding invoice</h2>
                                 <div class="detail-meta">
                                     <span><i class="fa-solid fa-folder"></i> <strong id="detail-ticket-category">BILLING</strong></span>
-                                    <span><i class="fa-solid fa-circle-exclamation"></i> <strong id="detail-ticket-priority">HIGH</strong></span>
+                                    <span><i class="fa-solid fa-triangle-exclamation"></i> <strong id="detail-ticket-priority">HIGH</strong></span>
                                     <span><i class="fa-solid fa-clock"></i> <strong id="detail-ticket-date">Just now</strong></span>
                                 </div>
                             </div>
 
                             <hr class="separator">
 
-                            <!-- Body Description -->
                             <div class="detail-body">
                                 <h3>Description</h3>
                                 <p id="detail-ticket-desc">I was double charged on my invoice. Please check.</p>
@@ -199,7 +241,7 @@
 
                             <hr class="separator">
 
-                            <!-- Workflow Action Controls -->
+                            <!-- Workflow operations -->
                             <div class="detail-actions">
                                 <h3>Workflow Operations</h3>
                                 <div class="action-grid">
@@ -230,13 +272,13 @@
                                     <textarea id="action-notes" rows="2" placeholder="Explain the changes or actions taken..."></textarea>
                                 </div>
                                 <div class="action-button-bar">
-                                    <button id="btn-update-ticket" class="btn btn-primary btn-full">
+                                    <button id="btn-update-ticket" class="btn btn-blue btn-full">
                                         <i class="fa-solid fa-floppy-disk"></i> Save Changes & Log History
                                     </button>
                                 </div>
                             </div>
 
-                            <!-- Customer Resolution Verify (Shows in Staff View as Customer Actions for Mock Testing) -->
+                            <!-- Customer confirmation Action -->
                             <div id="customer-verify-box" class="customer-verify-panel hidden">
                                 <h4><i class="fa-solid fa-user-check"></i> Customer Feedback Resolution Check</h4>
                                 <p>As a customer, is this issue fixed to your satisfaction?</p>
@@ -254,12 +296,11 @@
 
                             <!-- Audit Timeline -->
                             <div class="detail-timeline">
-                                <h3><i class="fa-solid fa-clock-rotate-left"></i> Audit & Escalation Log Timeline</h3>
+                                <h3>Audit & Escalation Log Timeline</h3>
                                 <div class="timeline-container" id="timeline-list">
                                     <!-- Dynamic logs go here -->
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
@@ -269,63 +310,61 @@
         </main>
     </div>
 
-    <!-- Authentication Overlay -->
-    <div id="auth-modal" class="auth-overlay">
-        <div class="auth-card glass-card animate-fade-in">
-            <div class="auth-header">
-                <i class="fa-solid fa-arrows-spin logo-icon auth-logo-icon"></i>
-                <h2>ResolveFlow</h2>
-                <p id="auth-subtitle">Login to access your workspace</p>
+    <!-- JWT AUTH MODAL OVERLAY -->
+    <div id="auth-modal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="close-modal-btn" id="btn-close-auth"><i class="fa-solid fa-xmark"></i></button>
+            <div class="auth-tabs">
+                <button id="tab-login" class="auth-tab-btn active">Login</button>
+                <button id="tab-register" class="auth-tab-btn">Register</button>
             </div>
-            
+
             <!-- Login Form -->
-            <form id="login-form" class="standard-form">
+            <form id="form-login" class="auth-form">
                 <div class="form-group">
                     <label for="login-username">Username</label>
-                    <input type="text" id="login-username" placeholder="Enter username" required>
+                    <input type="text" id="login-username" placeholder="Enter username..." required>
                 </div>
                 <div class="form-group">
                     <label for="login-password">Password</label>
-                    <input type="password" id="login-password" placeholder="Enter password" required>
+                    <input type="password" id="login-password" placeholder="Enter password..." required>
                 </div>
-                <button type="submit" class="btn btn-primary submit-btn">
-                    <i class="fa-solid fa-right-to-bracket"></i> Log In
+                <button type="submit" class="btn btn-blue btn-full submit-auth-btn">
+                    Login to Account
                 </button>
-                <p class="auth-toggle">Don't have an account? <span id="toggle-to-register">Register here</span></p>
             </form>
 
             <!-- Register Form -->
-            <form id="register-form" class="standard-form hidden">
+            <form id="form-register" class="auth-form hidden">
                 <div class="form-group">
-                    <label for="register-username">Username</label>
-                    <input type="text" id="register-username" placeholder="Choose a username" required>
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" placeholder="Choose username..." required>
                 </div>
                 <div class="form-group">
-                    <label for="register-email">Email Address</label>
-                    <input type="email" id="register-email" placeholder="you@example.com" required>
+                    <label for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" placeholder="Enter email..." required>
                 </div>
                 <div class="form-group">
-                    <label for="register-password">Password</label>
-                    <input type="password" id="register-password" placeholder="Create a strong password" required>
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" placeholder="Create password..." required>
                 </div>
                 <div class="form-group">
-                    <label for="register-role">System Role</label>
-                    <select id="register-role" required>
-                        <option value="CUSTOMER">Customer / Reporter</option>
-                        <option value="AGENT">Support Agent</option>
-                        <option value="SUPERVISOR">Supervisor</option>
-                        <option value="ADMIN">System Administrator</option>
+                    <label for="reg-role">Account Role</label>
+                    <select id="reg-role" required>
+                        <option value="CUSTOMER">Customer (Submit & track issues)</option>
+                        <option value="AGENT">Staff / Agent (Solve issues)</option>
+                        <option value="SUPERVISOR">Supervisor (Manage & Escalate)</option>
+                        <option value="ADMIN">Administrator (Full Access)</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-success submit-btn">
-                    <i class="fa-solid fa-user-plus"></i> Create Account
+                <button type="submit" class="btn btn-blue btn-full submit-auth-btn">
+                    Create Free Account
                 </button>
-                <p class="auth-toggle">Already have an account? <span id="toggle-to-login">Log in here</span></p>
             </form>
-            <div id="auth-error-message" class="auth-error hidden"></div>
         </div>
     </div>
 
+    <!-- JS file linked at the bottom -->
     <script src="app.js"></script>
 </body>
 </html>

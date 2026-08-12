@@ -2,15 +2,12 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Core Application State (using localStorage to persist changes)
+    // Core Application State (persisted via localStorage)
     let state = {
         tickets: JSON.parse(localStorage.getItem('resolveflow_tickets')) || [],
         selectedTicketId: null,
-        currentUser: {
-            username: localStorage.getItem('resolveflow_username') || null,
-            role: localStorage.getItem('resolveflow_role') || null,
-            token: localStorage.getItem('resolveflow_token') || null
-        }
+        token: localStorage.getItem('resolveflow_token') || null,
+        currentUser: JSON.parse(localStorage.getItem('resolveflow_user')) || null
     };
 
     // Initialize mock tickets if empty
@@ -23,16 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 category: "BILLING",
                 priority: "HIGH",
                 status: "CREATED",
-                customer: "Customer Alice",
+                customer: "alice",
                 assignee: null,
-                createdAt: new Date(Date.now() - 3600000 * 4).toISOString(), // 4 hours ago
+                createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
                 updatedAt: new Date(Date.now() - 3600000 * 4).toISOString(),
                 history: [
                     {
                         oldStatus: null,
                         newStatus: "CREATED",
-                        notes: "Feedback ticket submitted by Customer Alice.",
-                        actionBy: "Customer Alice",
+                        notes: "Feedback ticket submitted by customer.",
+                        actionBy: "alice",
                         timestamp: new Date(Date.now() - 3600000 * 4).toISOString()
                     }
                 ]
@@ -44,16 +41,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 category: "TECHNICAL",
                 priority: "URGENT",
                 status: "ASSIGNED",
-                customer: "Bob Roberts",
+                customer: "bob",
                 assignee: "Agent Smith",
-                createdAt: new Date(Date.now() - 3600000 * 24).toISOString(), // 24 hours ago
+                createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
                 updatedAt: new Date(Date.now() - 3600000 * 22).toISOString(),
                 history: [
                     {
                         oldStatus: null,
                         newStatus: "CREATED",
-                        notes: "Ticket created by Bob Roberts.",
-                        actionBy: "Bob Roberts",
+                        notes: "Ticket created by Bob.",
+                        actionBy: "bob",
                         timestamp: new Date(Date.now() - 3600000 * 24).toISOString()
                     },
                     {
@@ -73,20 +70,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 ]
             }
         ];
-        saveState();
+        saveTickets();
     }
 
     // DOM Elements
-    const btnCustomerView = document.getElementById('btn-customer-view');
-    const btnStaffView = document.getElementById('btn-staff-view');
+    const linkCustomer = document.getElementById('link-customer');
+    const linkStaff = document.getElementById('link-staff');
     const customerView = document.getElementById('customer-view');
     const staffView = document.getElementById('staff-view');
+    
+    // Auth DOM Elements
+    const authModal = document.getElementById('auth-modal');
+    const btnCloseAuth = document.getElementById('btn-close-auth');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const formLogin = document.getElementById('form-login');
+    const formRegister = document.getElementById('form-register');
+    const btnLoginTrigger = document.getElementById('btn-login-trigger');
+    const btnSignupTrigger = document.getElementById('btn-signup-trigger');
+    const navAuthActions = document.getElementById('nav-auth-actions');
+    const navUserActions = document.getElementById('nav-user-actions');
+    const currentUserLabel = document.getElementById('current-user-name');
+    const btnLogout = document.getElementById('btn-logout');
+
+    // Hero CTAs
+    const heroBtnSubmit = document.getElementById('hero-btn-submit');
+    const heroBtnWorkspace = document.getElementById('hero-btn-workspace');
+    const brandHome = document.getElementById('brand-home');
+
+    // Feedback DOM Elements
     const feedbackForm = document.getElementById('feedback-form');
     const customerTicketsList = document.getElementById('customer-tickets-list');
     const staffTicketsTbody = document.getElementById('staff-tickets-tbody');
     const staffFilterStatus = document.getElementById('staff-filter-status');
-    
-    // Detailed Panel DOM
+
+    // Details Panel DOM
     const detailPanel = document.getElementById('detail-panel');
     const emptyDetailMsg = document.getElementById('empty-detail-msg');
     const detailContent = document.getElementById('detail-content');
@@ -103,54 +121,232 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnUpdateTicket = document.getElementById('btn-update-ticket');
     const timelineList = document.getElementById('timeline-list');
 
-    // Customer Actions in Inspect panel
+    // Customer confirmation Action
     const customerVerifyBox = document.getElementById('customer-verify-box');
     const btnCustomerFixed = document.getElementById('btn-customer-fixed');
     const btnCustomerReopen = document.getElementById('btn-customer-reopen');
 
     // ==========================================
-    // View Switch Navigation
+    // Authentication & Modal Triggers
     // ==========================================
-    btnCustomerView.addEventListener('click', () => {
-        btnCustomerView.classList.add('active');
-        btnStaffView.classList.remove('active');
-        customerView.classList.add('active');
-        staffView.classList.remove('active');
-        state.selectedTicketId = null;
-        updateDetailPanel();
-        renderCustomerTickets();
+    btnLoginTrigger.addEventListener('click', () => showAuthModal('login'));
+    btnSignupTrigger.addEventListener('click', () => showAuthModal('register'));
+    btnCloseAuth.addEventListener('click', hideAuthModal);
+    
+    tabLogin.addEventListener('click', () => toggleAuthTab('login'));
+    tabRegister.addEventListener('click', () => toggleAuthTab('register'));
+
+    function showAuthModal(mode) {
+        authModal.classList.remove('hidden');
+        toggleAuthTab(mode);
+    }
+
+    function hideAuthModal() {
+        authModal.classList.add('hidden');
+    }
+
+    function toggleAuthTab(mode) {
+        if (mode === 'login') {
+            tabLogin.classList.add('active');
+            tabRegister.classList.remove('active');
+            formLogin.classList.remove('hidden');
+            formRegister.classList.add('hidden');
+        } else {
+            tabRegister.classList.add('active');
+            tabLogin.classList.remove('active');
+            formRegister.classList.remove('hidden');
+            formLogin.classList.add('hidden');
+        }
+    }
+
+    // Submit Login form (handles live API / Mock fallback)
+    formLogin.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                handleLoginSuccess(data.token, data.username, data.role);
+            } else {
+                const errMsg = await response.text();
+                showToast("Login failed: " + errMsg);
+            }
+        } catch (error) {
+            // Network failure fallback for initial mock testing
+            console.warn("API offline, falling back to simulated session authentication");
+            let role = "CUSTOMER"; // Default simulated role
+            if (username.toLowerCase().includes('agent')) role = "AGENT";
+            if (username.toLowerCase().includes('supervisor')) role = "SUPERVISOR";
+            if (username.toLowerCase().includes('admin')) role = "ADMIN";
+
+            handleLoginSuccess("mock-jwt-token", username, role);
+            showToast(`Simulated Login: Welcome, ${username}!`);
+        }
     });
 
-    btnStaffView.addEventListener('click', () => {
-        if (!state.currentUser.token) {
-            showToast("Please log in first!");
-            showAuthModal();
+    // Submit Registration form (handles live API / Mock fallback)
+    formRegister.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('reg-username').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const password = document.getElementById('reg-password').value;
+        const role = document.getElementById('reg-role').value;
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password, role })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                handleLoginSuccess(data.token, data.username, data.role);
+            } else {
+                const errMsg = await response.text();
+                showToast("Registration failed: " + errMsg);
+            }
+        } catch (error) {
+            console.warn("API offline, falling back to simulated registration");
+            handleLoginSuccess("mock-jwt-token", username, role);
+            showToast("Simulated Registration complete.");
+        }
+    });
+
+    function handleLoginSuccess(token, username, role) {
+        state.token = token;
+        state.currentUser = { username, role };
+        
+        localStorage.setItem('resolveflow_token', token);
+        localStorage.setItem('resolveflow_user', JSON.stringify(state.currentUser));
+
+        hideAuthModal();
+        updateAuthHeader();
+
+        // Redirect based on role
+        if (role === 'CUSTOMER') {
+            switchView('customer');
+        } else {
+            switchView('staff');
+        }
+    }
+
+    // Logout Action
+    btnLogout.addEventListener('click', () => {
+        state.token = null;
+        state.currentUser = null;
+        localStorage.removeItem('resolveflow_token');
+        localStorage.removeItem('resolveflow_user');
+        
+        updateAuthHeader();
+        switchView('customer');
+        showToast("Logged out successfully.");
+    });
+
+    function updateAuthHeader() {
+        if (state.currentUser) {
+            navAuthActions.classList.add('hidden');
+            navUserActions.classList.remove('hidden');
+            currentUserLabel.textContent = `${state.currentUser.username} (${state.currentUser.role})`;
+        } else {
+            navAuthActions.classList.remove('hidden');
+            navUserActions.classList.add('hidden');
+        }
+    }
+
+    // ==========================================
+    // Navigation & Workspace Switching
+    // ==========================================
+    brandHome.addEventListener('click', () => {
+        switchView('customer');
+    });
+
+    linkCustomer.addEventListener('click', (e) => {
+        e.preventDefault();
+        switchView('customer');
+    });
+
+    linkStaff.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!state.currentUser) {
+            showToast("Please Login or Sign Up to access the Staff Workspace.");
+            showAuthModal('login');
             return;
         }
         if (state.currentUser.role === 'CUSTOMER') {
-            showToast("Access Denied: Customers cannot access Staff Workspace!");
+            showToast("Access Denied: Only staff roles (Agent, Supervisor, Admin) can access the workspace.");
             return;
         }
-        btnStaffView.classList.add('active');
-        btnCustomerView.classList.remove('active');
-        staffView.classList.add('active');
-        customerView.classList.remove('active');
-        state.selectedTicketId = null;
-        updateDetailPanel();
-        renderStaffTickets();
+        switchView('staff');
     });
 
+    // Hero buttons triggers
+    heroBtnSubmit.addEventListener('click', () => {
+        if (!state.currentUser) {
+            showToast("Please sign in to submit feedback tickets.");
+            showAuthModal('login');
+            return;
+        }
+        document.getElementById('fb-title').focus();
+    });
+
+    heroBtnWorkspace.addEventListener('click', () => {
+        if (!state.currentUser) {
+            showToast("Please sign in to access the queue.");
+            showAuthModal('login');
+            return;
+        }
+        if (state.currentUser.role === 'CUSTOMER') {
+            showToast("Access Denied: Customer accounts cannot inspect staff queues.");
+            return;
+        }
+        switchView('staff');
+    });
+
+    function switchView(view) {
+        state.selectedTicketId = null;
+        updateDetailPanel();
+        
+        if (view === 'customer') {
+            linkCustomer.classList.add('active');
+            linkStaff.classList.remove('active');
+            customerView.classList.add('active');
+            staffView.classList.remove('active');
+            renderCustomerTickets();
+        } else {
+            linkStaff.classList.add('active');
+            linkCustomer.classList.remove('active');
+            staffView.classList.add('active');
+            customerView.classList.remove('active');
+            renderStaffTickets();
+        }
+    }
+
     // ==========================================
-    // Form Submission
+    // Submit Feedback Ticket
     // ==========================================
     feedbackForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
+        if (!state.currentUser) {
+            showToast("Please log in to submit a ticket.");
+            showAuthModal('login');
+            return;
+        }
+
         const title = document.getElementById('fb-title').value.trim();
         const category = document.getElementById('fb-category').value;
         const priority = document.getElementById('fb-priority').value;
         const description = document.getElementById('fb-description').value.trim();
-        
+
         const newTicket = {
             id: state.tickets.length > 0 ? Math.max(...state.tickets.map(t => t.id)) + 1 : 1,
             title: title,
@@ -166,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 {
                     oldStatus: null,
                     newStatus: "CREATED",
-                    notes: "Feedback ticket submitted successfully by Customer Alice.",
+                    notes: `Ticket created by ${state.currentUser.username}.`,
                     actionBy: state.currentUser.username,
                     timestamp: new Date().toISOString()
                 }
@@ -174,16 +370,14 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         state.tickets.push(newTicket);
-        saveState();
+        saveTickets();
         feedbackForm.reset();
         renderCustomerTickets();
-
-        // Toast/Notification mock alert
-        showToast("Ticket #" + newTicket.id + " submitted successfully!");
+        showToast(`Ticket #${newTicket.id} submitted successfully!`);
     });
 
     // ==========================================
-    // Update Workflow Status & Assignee
+    // Save Changes & Update Status (Staff Actions)
     // ==========================================
     btnUpdateTicket.addEventListener('click', () => {
         if (!state.selectedTicketId) return;
@@ -195,36 +389,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const oldStatus = ticket.status;
         const newStatus = actionStatus.value;
         const newAssignee = actionAssignee.value || null;
-        const notes = actionNotes.value.trim() || `Workflow update by ${state.currentUser.username}.`;
+        const notes = actionNotes.value.trim() || `Status updated by ${state.currentUser.username}.`;
 
-        // Check if anything changed
         const statusChanged = oldStatus !== newStatus;
         const assigneeChanged = ticket.assignee !== newAssignee;
 
         if (!statusChanged && !assigneeChanged) {
-            showToast("No changes selected.");
+            showToast("No changes detected.");
             return;
         }
 
-        // Update properties
+        // Update Properties
         ticket.status = newStatus;
         ticket.assignee = newAssignee;
         ticket.updatedAt = new Date().toISOString();
 
-        // Append to history log
+        // History Log
         ticket.history.push({
             oldStatus: oldStatus,
             newStatus: newStatus,
-            notes: notes + (assigneeChanged ? ` (Assignee updated to: ${newAssignee || 'Unassigned'})` : ''),
+            notes: notes + (assigneeChanged ? ` (Assignee: ${newAssignee || 'Unassigned'})` : ''),
             actionBy: state.currentUser.username,
             timestamp: new Date().toISOString()
         });
 
-        saveState();
+        saveTickets();
         actionNotes.value = "";
-        showToast("Workflow ticket #" + ticket.id + " updated.");
+        showToast(`Workflow updated for Ticket #${ticket.id}`);
 
-        if (btnStaffView.classList.contains('active')) {
+        if (linkStaff.classList.contains('active')) {
             renderStaffTickets();
         } else {
             renderCustomerTickets();
@@ -233,14 +426,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // Customer Action buttons (Verify Fix / Reopen)
+    // Customer Actions (Confirm Resolution / Reopen)
     // ==========================================
     btnCustomerFixed.addEventListener('click', () => {
-        transitionTicketStatusByCustomer("CLOSED", "Customer confirmed the issue is fixed. Ticket closed.");
+        transitionTicketStatusByCustomer("CLOSED", "Fix confirmed by customer. Closed.");
     });
 
     btnCustomerReopen.addEventListener('click', () => {
-        transitionTicketStatusByCustomer("REOPENED", "Customer reported the issue is not fixed. Reopening for investigation.");
+        transitionTicketStatusByCustomer("REOPENED", "Customer reported issue is not resolved. Reopened.");
     });
 
     function transitionTicketStatusByCustomer(targetStatus, notes) {
@@ -258,14 +451,14 @@ document.addEventListener('DOMContentLoaded', () => {
             oldStatus: oldStatus,
             newStatus: targetStatus,
             notes: notes,
-            actionBy: "Customer Alice", // Simulated Customer Action
+            actionBy: state.currentUser ? state.currentUser.username : "Customer",
             timestamp: new Date().toISOString()
         });
 
-        saveState();
-        showToast(`Ticket status updated to ${targetStatus}`);
-        
-        if (btnCustomerView.classList.contains('active')) {
+        saveTickets();
+        showToast(`Status updated to ${targetStatus}`);
+
+        if (linkCustomer.classList.contains('active')) {
             renderCustomerTickets();
         } else {
             renderStaffTickets();
@@ -274,19 +467,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // Render Functions
+    // Rendering Functions
     // ==========================================
     function renderCustomerTickets() {
         customerTicketsList.innerHTML = "";
-        
-        // Show only tickets created by "Customer Alice" or mock customer
-        const customerTickets = state.tickets.filter(t => t.customer === "Customer Alice");
+
+        if (!state.currentUser) {
+            customerTicketsList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-user-lock empty-icon"></i>
+                    <p>Please login to view your feedback tickets.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const customerTickets = state.tickets.filter(t => t.customer === state.currentUser.username);
 
         if (customerTickets.length === 0) {
             customerTicketsList.innerHTML = `
                 <div class="empty-state">
                     <i class="fa-solid fa-inbox empty-icon"></i>
-                    <p>No feedback submitted yet. Use the form on the left to start.</p>
+                    <p>No feedback tickets submitted yet. Use the form on the left to start.</p>
                 </div>
             `;
             return;
@@ -315,7 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             card.addEventListener('click', () => {
                 state.selectedTicketId = ticket.id;
-                // Add select class to DOM elements
                 document.querySelectorAll('.ticket-card').forEach(el => el.classList.remove('selected'));
                 card.classList.add('selected');
                 updateDetailPanel();
@@ -335,7 +536,7 @@ document.addEventListener('DOMContentLoaded', () => {
             staffTicketsTbody.innerHTML = `
                 <tr>
                     <td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">
-                        No tickets matching the filter criteria found in the queue.
+                        No tickets matching the filter in the queue.
                     </td>
                 </tr>
             `;
@@ -344,9 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         filteredTickets.forEach(ticket => {
             const tr = document.createElement('tr');
-            if (state.selectedTicketId === ticket.id) {
-                tr.className = "selected";
-            }
+            if (state.selectedTicketId === ticket.id) tr.className = "selected";
 
             const catBadge = getCategoryBadgeClass(ticket.category);
             const priBadge = getPriorityBadgeClass(ticket.priority);
@@ -358,15 +557,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="badge ${catBadge}">${ticket.category}</span></td>
                 <td><span class="badge ${priBadge}">${ticket.priority}</span></td>
                 <td><span class="badge ${statusBadge}">${ticket.status.replace('_', ' ')}</span></td>
-                <td><span class="assignee-text">${ticket.assignee || '<em>Unassigned</em>'}</span></td>
+                <td><span>${ticket.assignee || '<em>Unassigned</em>'}</span></td>
                 <td>
-                    <button class="btn btn-primary btn-sm inspect-btn">
+                    <button class="btn btn-blue btn-sm">
                         <i class="fa-solid fa-magnifying-glass"></i> Inspect
                     </button>
                 </td>
             `;
 
-            // Click table row to inspect
             tr.addEventListener('click', () => {
                 state.selectedTicketId = ticket.id;
                 document.querySelectorAll('#staff-tickets-tbody tr').forEach(el => el.classList.remove('selected'));
@@ -391,7 +589,6 @@ document.addEventListener('DOMContentLoaded', () => {
         emptyDetailMsg.classList.add('hidden');
         detailContent.classList.remove('hidden');
 
-        // Text mappings
         detailTicketId.textContent = `#TKT-${ticket.id}`;
         detailTicketTitle.textContent = ticket.title;
         detailTicketDesc.textContent = ticket.description;
@@ -399,30 +596,24 @@ document.addEventListener('DOMContentLoaded', () => {
         detailTicketPriority.textContent = ticket.priority;
         detailTicketDate.textContent = new Date(ticket.createdAt).toLocaleString();
 
-        // Status Badge Mapping
         detailTicketStatus.textContent = ticket.status.replace('_', ' ');
         detailTicketStatus.className = `badge ${getStatusBadgeClass(ticket.status)}`;
 
-        // Dropdowns setup
         actionStatus.value = ticket.status;
         actionAssignee.value = ticket.assignee || "";
 
-        // Verify Box: only visible for Customers when status is RESOLVED
-        // (For testing purposes, we also display it in staff view to easily test the Customer confirmation action)
+        // Check if verify panel should show
         if (ticket.status === "RESOLVED") {
             customerVerifyBox.classList.remove('hidden');
         } else {
             customerVerifyBox.classList.add('hidden');
         }
 
-        // Render timeline history
         renderTimeline(ticket.history);
     }
 
     function renderTimeline(historyList) {
         timelineList.innerHTML = "";
-        
-        // Reverse array to show most recent action on top
         const reversedHistory = [...historyList].reverse();
 
         reversedHistory.forEach(item => {
@@ -444,7 +635,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 ${item.notes ? `<div class="timeline-notes">${escapeHTML(item.notes)}</div>` : ''}
             `;
-            
             timelineList.appendChild(itemDiv);
         });
     }
@@ -457,9 +647,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // Helpers
+    // Helper utilities
     // ==========================================
-    function saveState() {
+    function saveTickets() {
         localStorage.setItem('resolveflow_tickets', JSON.stringify(state.tickets));
     }
 
@@ -510,32 +700,27 @@ document.addEventListener('DOMContentLoaded', () => {
         toast.className = 'toast-msg';
         toast.textContent = message;
         document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 100);
-
+        setTimeout(() => toast.classList.add('show'), 100);
         setTimeout(() => {
             toast.classList.remove('show');
             setTimeout(() => toast.remove(), 300);
         }, 3000);
     }
 
-    // Inject Toast styling inline to keep styles file neat
     const toastStyle = document.createElement('style');
     toastStyle.textContent = `
         .toast-msg {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: rgba(15, 17, 28, 0.9);
+            background: #0f172a;
             border: 1px solid var(--primary);
             color: #fff;
             padding: 12px 24px;
-            border-radius: 10px;
+            border-radius: 6px;
             font-size: 14px;
             font-weight: 600;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             z-index: 9999;
             opacity: 0;
             transform: translateY(10px);
@@ -548,176 +733,8 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(toastStyle);
 
-    // ==========================================
-    // Authentication & Session Management
-    // ==========================================
-    const authModal = document.getElementById('auth-modal');
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const toggleToRegister = document.getElementById('toggle-to-register');
-    const toggleToLogin = document.getElementById('toggle-to-login');
-    const authErrorMsg = document.getElementById('auth-error-message');
-    const authSubtitle = document.getElementById('auth-subtitle');
-    
-    const userDisplayName = document.getElementById('user-display-name');
-    const userDisplayRole = document.getElementById('user-display-role');
-    const btnLogout = document.getElementById('btn-logout');
-
-    function showAuthModal() {
-        authModal.classList.remove('hidden');
-        authModal.style.display = 'flex';
-        loginForm.reset();
-        registerForm.reset();
-        authErrorMsg.classList.add('hidden');
-        showLoginForm();
-    }
-
-    function hideAuthModal() {
-        authModal.classList.add('hidden');
-        authModal.style.display = 'none';
-    }
-
-    function showLoginForm() {
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-        authSubtitle.textContent = "Login to access your workspace";
-    }
-
-    function showRegisterForm() {
-        registerForm.classList.remove('hidden');
-        loginForm.classList.add('hidden');
-        authSubtitle.textContent = "Create an account to submit or manage feedback";
-    }
-
-    toggleToRegister.addEventListener('click', showRegisterForm);
-    toggleToLogin.addEventListener('click', showLoginForm);
-
-    function updateHeaderUI() {
-        if (state.currentUser.token) {
-            userDisplayName.textContent = state.currentUser.username;
-            userDisplayRole.textContent = state.currentUser.role;
-            userDisplayRole.className = `user-role-badge role-${state.currentUser.role.toLowerCase()}`;
-            btnLogout.classList.remove('hidden');
-            
-            if (state.currentUser.role === 'CUSTOMER') {
-                btnStaffView.style.opacity = '0.5';
-                btnStaffView.title = 'Access Denied: Only support staff can enter this workspace';
-            } else {
-                btnStaffView.style.opacity = '1';
-                btnStaffView.removeAttribute('title');
-            }
-        } else {
-            userDisplayName.textContent = "Guest";
-            userDisplayRole.textContent = "GUEST";
-            userDisplayRole.className = "user-role-badge";
-            btnLogout.classList.add('hidden');
-        }
-    }
-
-    // Handle Login
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        authErrorMsg.classList.add('hidden');
-        const username = document.getElementById('login-username').value.trim();
-        const password = document.getElementById('login-password').value;
-
-        try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-
-            if (!response.ok) {
-                const errMsg = await response.text();
-                throw new Error(errMsg || "Invalid credentials. Please try again.");
-            }
-
-            const data = await response.json();
-            loginSession(data);
-        } catch (error) {
-            authErrorMsg.textContent = error.message;
-            authErrorMsg.classList.remove('hidden');
-        }
-    });
-
-    // Handle Register
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        authErrorMsg.classList.add('hidden');
-        const username = document.getElementById('register-username').value.trim();
-        const email = document.getElementById('register-email').value.trim();
-        const password = document.getElementById('register-password').value;
-        const role = document.getElementById('register-role').value;
-
-        try {
-            const response = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password, role })
-            });
-
-            if (!response.ok) {
-                const errMsg = await response.text();
-                throw new Error(errMsg || "Registration failed. Try a different username/email.");
-            }
-
-            const data = await response.json();
-            loginSession(data);
-        } catch (error) {
-            authErrorMsg.textContent = error.message;
-            authErrorMsg.classList.remove('hidden');
-        }
-    });
-
-    function loginSession(data) {
-        state.currentUser = {
-            username: data.username,
-            role: data.role,
-            token: data.token
-        };
-        localStorage.setItem('resolveflow_username', data.username);
-        localStorage.setItem('resolveflow_role', data.role);
-        localStorage.setItem('resolveflow_token', data.token);
-
-        hideAuthModal();
-        updateHeaderUI();
-        showToast(`Welcome back, ${data.username}!`);
-
-        if (data.role === 'CUSTOMER') {
-            btnCustomerView.click();
-        } else {
-            btnStaffView.click();
-        }
-    }
-
-    btnLogout.addEventListener('click', () => {
-        state.currentUser = { username: null, role: null, token: null };
-        localStorage.removeItem('resolveflow_username');
-        localStorage.removeItem('resolveflow_role');
-        localStorage.removeItem('resolveflow_token');
-        updateHeaderUI();
-        showAuthModal();
-        showToast("Logged out successfully.");
-    });
-
-    // Initialize application view state
-    function initApp() {
-        if (state.currentUser.token) {
-            hideAuthModal();
-            updateHeaderUI();
-            if (state.currentUser.role === 'CUSTOMER') {
-                btnCustomerView.click();
-            } else {
-                btnStaffView.click();
-            }
-        } else {
-            showAuthModal();
-            updateHeaderUI();
-            renderCustomerTickets();
-        }
-    }
-
-    initApp();
+    // Initial setups
+    updateAuthHeader();
+    renderCustomerTickets();
 
 });

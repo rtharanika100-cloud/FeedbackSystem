@@ -51,6 +51,9 @@ public class Feedback {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_escalated")
+    private Boolean isEscalated = false;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -152,5 +155,13 @@ public class Feedback {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Boolean getIsEscalated() {
+        return isEscalated != null && isEscalated;
+    }
+
+    public void setIsEscalated(Boolean isEscalated) {
+        this.isEscalated = isEscalated;
     }
 }

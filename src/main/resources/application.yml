@@ -1,13 +1,13 @@
 spring:
   profiles:
-    active: local
+    active: mysql
   application:
     name: feedback-workflow
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://db.akkskcrvczejklbshmsc.supabase.co:5432/postgres}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${SUPABASE_SECRET_KEY:your_supabase_secret_key_here}
-    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL:jdbc:mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/test?sslMode=VERIFY_IDENTITY&enabledTLSProtocols=TLSv1.2,TLSv1.3}
+    username: ${DATABASE_USERNAME:33N8Zn2zmtSCuQh.root}
+    password: ${DATABASE_PASSWORD:vQp7Sf4NqrY5S4Ri}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,13 +15,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.MySQLDialect
 
 server:
   port: ${PORT:3000}
 
 app:
   jwt:
-    secret: ${JWT_SECRET:your_jwt_secret_here_must_be_at_least_256_bits_long_for_security}
+    secret: ${JWT_SECRET:wH5Gv6ehSPXFgBs2aoFtPV8/yIlChDlQxqf5Q0h/c1BsGjE0SD4Lp/ScsMm8TLwrTthagSaekaFq3L86cPLaFw==}
+
 
 

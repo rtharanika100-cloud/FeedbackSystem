@@ -73,11 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
         saveTickets();
     }
 
-    // DOM Elements
-    const linkCustomer = document.getElementById('link-customer');
-    const linkStaff = document.getElementById('link-staff');
+    // Navigation Links
+    const linkCustomerView = document.getElementById('link-customer-view');
+    const linkAgentView = document.getElementById('link-agent-view');
+    const linkAdminView = document.getElementById('link-admin-view');
+    const brandHome = document.getElementById('brand-home');
+
+    // Views
     const customerView = document.getElementById('customer-view');
-    const staffView = document.getElementById('staff-view');
+    const agentView = document.getElementById('agent-view');
+    const adminView = document.getElementById('admin-view');
     
     // Auth DOM Elements
     const authModal = document.getElementById('auth-modal');
@@ -93,41 +98,100 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUserLabel = document.getElementById('current-user-name');
     const btnLogout = document.getElementById('btn-logout');
 
+    // Instructions Modal Elements & Triggers
+    const instructionsModal = document.getElementById('instructions-modal');
+    const btnGuideTrigger = document.getElementById('btn-guide-trigger');
+    const btnGuideUserTrigger = document.getElementById('btn-guide-user-trigger');
+    const btnCloseInstructions = document.getElementById('btn-close-instructions');
+    const btnGuideGotIt = document.getElementById('btn-guide-got-it');
+
+    if (btnGuideTrigger) btnGuideTrigger.addEventListener('click', showInstructionsModal);
+    if (btnGuideUserTrigger) btnGuideUserTrigger.addEventListener('click', showInstructionsModal);
+    if (btnCloseInstructions) btnCloseInstructions.addEventListener('click', hideInstructionsModal);
+    if (btnGuideGotIt) btnGuideGotIt.addEventListener('click', hideInstructionsModal);
+
+    function showInstructionsModal() {
+        if (instructionsModal) instructionsModal.classList.remove('hidden');
+    }
+
+    function hideInstructionsModal() {
+        if (instructionsModal) instructionsModal.classList.add('hidden');
+    }
+
+    // Customer Ticket Inspection Modal
+    const customerTicketModal = document.getElementById('customer-ticket-modal');
+    const btnCloseCustomerModal = document.getElementById('btn-close-customer-modal');
+    const custModalTicketId = document.getElementById('cust-modal-ticket-id');
+    const custModalTicketStatus = document.getElementById('cust-modal-ticket-status');
+    const custModalTicketTitle = document.getElementById('cust-modal-ticket-title');
+    const custModalTicketCategory = document.getElementById('cust-modal-ticket-category');
+    const custModalTicketPriority = document.getElementById('cust-modal-ticket-priority');
+    const custModalTicketAgent = document.getElementById('cust-modal-ticket-agent');
+    const custModalTicketDesc = document.getElementById('cust-modal-ticket-desc');
+    const custModalVerifyBox = document.getElementById('cust-modal-verify-box');
+    const btnCustConfirmClose = document.getElementById('btn-cust-confirm-close');
+    const btnCustReopen = document.getElementById('btn-cust-reopen');
+    const custModalTimeline = document.getElementById('cust-modal-timeline');
+
+    if (btnCloseCustomerModal) {
+        btnCloseCustomerModal.addEventListener('click', () => {
+            customerTicketModal.classList.add('hidden');
+        });
+    }
+
     // Hero CTAs
     const heroBtnSubmit = document.getElementById('hero-btn-submit');
     const heroBtnWorkspace = document.getElementById('hero-btn-workspace');
-    const brandHome = document.getElementById('brand-home');
 
-    // Feedback DOM Elements
+    // Customer Feedback DOM
     const feedbackForm = document.getElementById('feedback-form');
     const customerTicketsList = document.getElementById('customer-tickets-list');
-    const staffTicketsTbody = document.getElementById('staff-tickets-tbody');
-    const staffFilterStatus = document.getElementById('staff-filter-status');
 
-    // Details Panel DOM
-    const detailPanel = document.getElementById('detail-panel');
-    const emptyDetailMsg = document.getElementById('empty-detail-msg');
-    const detailContent = document.getElementById('detail-content');
-    const detailTicketId = document.getElementById('detail-ticket-id');
-    const detailTicketStatus = document.getElementById('detail-ticket-status');
-    const detailTicketTitle = document.getElementById('detail-ticket-title');
-    const detailTicketCategory = document.getElementById('detail-ticket-category');
-    const detailTicketPriority = document.getElementById('detail-ticket-priority');
-    const detailTicketDate = document.getElementById('detail-ticket-date');
-    const detailTicketDesc = document.getElementById('detail-ticket-desc');
-    const actionAssignee = document.getElementById('action-assignee');
-    const actionStatus = document.getElementById('action-status');
-    const actionNotes = document.getElementById('action-notes');
-    const btnUpdateTicket = document.getElementById('btn-update-ticket');
-    const timelineList = document.getElementById('timeline-list');
+    // Agent Workspace DOM
+    const agentTicketsTbody = document.getElementById('agent-tickets-tbody');
+    const agentFilterStatus = document.getElementById('agent-filter-status');
+    const agentEmptyDetailMsg = document.getElementById('agent-empty-detail-msg');
+    const agentDetailContent = document.getElementById('agent-detail-content');
+    const agentDetailTicketId = document.getElementById('agent-detail-ticket-id');
+    const agentDetailTicketStatus = document.getElementById('agent-detail-ticket-status');
+    const agentDetailTicketTitle = document.getElementById('agent-detail-ticket-title');
+    const agentDetailTicketCategory = document.getElementById('agent-detail-ticket-category');
+    const agentDetailTicketPriority = document.getElementById('agent-detail-ticket-priority');
+    const agentDetailTicketCustomer = document.getElementById('agent-detail-ticket-customer');
+    const agentDetailTicketDesc = document.getElementById('agent-detail-ticket-desc');
+    const agentActionStatus = document.getElementById('agent-action-status');
+    const agentActionNotes = document.getElementById('agent-action-notes');
+    const btnAgentUpdateTicket = document.getElementById('btn-agent-update-ticket');
+    const btnAgentEscalateTicket = document.getElementById('btn-agent-escalate-ticket');
+    const agentTimelineList = document.getElementById('agent-timeline-list');
 
-    // Customer confirmation Action
-    const customerVerifyBox = document.getElementById('customer-verify-box');
-    const btnCustomerFixed = document.getElementById('btn-customer-fixed');
-    const btnCustomerReopen = document.getElementById('btn-customer-reopen');
+    // Admin Workspace DOM
+    const adminTicketsTbody = document.getElementById('admin-tickets-tbody');
+    const adminFilterStatus = document.getElementById('admin-filter-status');
+    const adminEmptyDetailMsg = document.getElementById('admin-empty-detail-msg');
+    const adminDetailContent = document.getElementById('admin-detail-content');
+    const adminDetailTicketId = document.getElementById('admin-detail-ticket-id');
+    const adminDetailTicketStatus = document.getElementById('admin-detail-ticket-status');
+    const adminDetailTicketTitle = document.getElementById('admin-detail-ticket-title');
+    const adminDetailTicketCategory = document.getElementById('admin-detail-ticket-category');
+    const adminDetailTicketPriority = document.getElementById('admin-detail-ticket-priority');
+    const adminDetailTicketCustomer = document.getElementById('admin-detail-ticket-customer');
+    const adminDetailTicketDesc = document.getElementById('admin-detail-ticket-desc');
+    const adminActionAssignee = document.getElementById('admin-action-assignee');
+    const adminActionPriority = document.getElementById('admin-action-priority');
+    const adminActionStatus = document.getElementById('admin-action-status');
+    const adminActionNotes = document.getElementById('admin-action-notes');
+    const btnAdminUpdateTicket = document.getElementById('btn-admin-update-ticket');
+    const adminTimelineList = document.getElementById('admin-timeline-list');
+
+    // Admin Stats DOM
+    const statTotalTickets = document.getElementById('stat-total-tickets');
+    const statEscalatedTickets = document.getElementById('stat-escalated-tickets');
+    const statUnassignedTickets = document.getElementById('stat-unassigned-tickets');
+    const statResolvedTickets = document.getElementById('stat-resolved-tickets');
 
     // ==========================================
-    // Authentication & Modal Triggers
+    // Authentication & Role Permissions
     // ==========================================
     btnLoginTrigger.addEventListener('click', () => showAuthModal('login'));
     btnSignupTrigger.addEventListener('click', () => showAuthModal('register'));
@@ -159,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Submit Login form (handles live API / Mock fallback)
+    // Submit Login form
     formLogin.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('login-username').value.trim();
@@ -180,19 +244,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast("Login failed: " + errMsg);
             }
         } catch (error) {
-            // Network failure fallback for initial mock testing
             console.warn("API offline, falling back to simulated session authentication");
-            let role = "CUSTOMER"; // Default simulated role
-            if (username.toLowerCase().includes('agent')) role = "AGENT";
-            if (username.toLowerCase().includes('supervisor')) role = "SUPERVISOR";
-            if (username.toLowerCase().includes('admin')) role = "ADMIN";
+            let role = "CUSTOMER";
+            const lowerName = username.toLowerCase();
+            if (lowerName.includes('agent')) role = "AGENT";
+            if (lowerName.includes('supervisor') || lowerName.includes('admin')) role = "ADMIN";
 
             handleLoginSuccess("mock-jwt-token", username, role);
-            showToast(`Simulated Login: Welcome, ${username}!`);
+            showToast(`Welcome, ${username}! (${role} role)`);
         }
     });
 
-    // Submit Registration form (handles live API / Mock fallback)
+    // Submit Registration form
     formRegister.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('reg-username').value.trim();
@@ -217,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.warn("API offline, falling back to simulated registration");
             handleLoginSuccess("mock-jwt-token", username, role);
-            showToast("Simulated Registration complete.");
+            showToast(`Account created as ${role}!`);
         }
     });
 
@@ -229,13 +292,15 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('resolveflow_user', JSON.stringify(state.currentUser));
 
         hideAuthModal();
-        updateAuthHeader();
+        applyRolePermissions();
 
-        // Redirect based on role
-        if (role === 'CUSTOMER') {
-            switchView('customer');
+        // Redirect to role workspace
+        if (role === 'AGENT') {
+            switchView('agent');
+        } else if (role === 'SUPERVISOR' || role === 'ADMIN') {
+            switchView('admin');
         } else {
-            switchView('staff');
+            switchView('customer');
         }
     }
 
@@ -246,98 +311,144 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('resolveflow_token');
         localStorage.removeItem('resolveflow_user');
         
-        updateAuthHeader();
+        applyRolePermissions();
         switchView('customer');
         showToast("Logged out successfully.");
     });
 
-    function updateAuthHeader() {
+    function applyRolePermissions() {
         if (state.currentUser) {
             navAuthActions.classList.add('hidden');
             navUserActions.classList.remove('hidden');
             currentUserLabel.textContent = `${state.currentUser.username} (${state.currentUser.role})`;
+
+            const role = state.currentUser.role;
+            if (role === 'CUSTOMER') {
+                linkCustomerView.classList.remove('hidden');
+                linkAgentView.classList.add('hidden');
+                linkAdminView.classList.add('hidden');
+            } else if (role === 'AGENT') {
+                linkCustomerView.classList.remove('hidden');
+                linkAgentView.classList.remove('hidden');
+                linkAdminView.classList.add('hidden');
+            } else if (role === 'SUPERVISOR' || role === 'ADMIN') {
+                linkCustomerView.classList.remove('hidden');
+                linkAgentView.classList.remove('hidden');
+                linkAdminView.classList.remove('hidden');
+            }
         } else {
             navAuthActions.classList.remove('hidden');
             navUserActions.classList.add('hidden');
+            linkCustomerView.classList.remove('hidden');
+            linkAgentView.classList.add('hidden');
+            linkAdminView.classList.add('hidden');
         }
     }
 
     // ==========================================
-    // Navigation & Workspace Switching
+    // Navigation Routing & Workspace Switching
     // ==========================================
-    brandHome.addEventListener('click', () => {
-        switchView('customer');
-    });
+    brandHome.addEventListener('click', () => switchView('customer'));
 
-    linkCustomer.addEventListener('click', (e) => {
-        e.preventDefault();
-        switchView('customer');
-    });
+    if (linkCustomerView) {
+        linkCustomerView.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchView('customer');
+        });
+    }
 
-    linkStaff.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (!state.currentUser) {
-            showToast("Please Login or Sign Up to access the Staff Workspace.");
-            showAuthModal('login');
-            return;
-        }
-        if (state.currentUser.role === 'CUSTOMER') {
-            showToast("Access Denied: Only staff roles (Agent, Supervisor, Admin) can access the workspace.");
-            return;
-        }
-        switchView('staff');
-    });
+    if (linkAgentView) {
+        linkAgentView.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!state.currentUser || state.currentUser.role === 'CUSTOMER') {
+                showToast("Access Denied: Agent role required.");
+                return;
+            }
+            switchView('agent');
+        });
+    }
 
-    // Hero buttons triggers
+    if (linkAdminView) {
+        linkAdminView.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!state.currentUser || (state.currentUser.role !== 'ADMIN' && state.currentUser.role !== 'SUPERVISOR')) {
+                showToast("Access Denied: Admin or Supervisor role required.");
+                return;
+            }
+            switchView('admin');
+        });
+    }
+
     heroBtnSubmit.addEventListener('click', () => {
         if (!state.currentUser) {
-            showToast("Please sign in to submit feedback tickets.");
+            showToast("Please login or register to submit feedback.");
             showAuthModal('login');
             return;
         }
+        switchView('customer');
         document.getElementById('fb-title').focus();
     });
 
     heroBtnWorkspace.addEventListener('click', () => {
         if (!state.currentUser) {
-            showToast("Please sign in to access the queue.");
+            showToast("Please login to access workspace queues.");
             showAuthModal('login');
             return;
         }
         if (state.currentUser.role === 'CUSTOMER') {
-            showToast("Access Denied: Customer accounts cannot inspect staff queues.");
-            return;
+            showToast("Customer accounts track issues in Customer Portal.");
+            switchView('customer');
+        } else if (state.currentUser.role === 'AGENT') {
+            switchView('agent');
+        } else {
+            switchView('admin');
         }
-        switchView('staff');
     });
 
     function switchView(view) {
         state.selectedTicketId = null;
-        updateDetailPanel();
         
-        if (view === 'customer') {
-            linkCustomer.classList.add('active');
-            linkStaff.classList.remove('active');
-            customerView.classList.add('active');
-            staffView.classList.remove('active');
-            renderCustomerTickets();
+        // Remove active states from nav
+        linkCustomerView.classList.remove('active');
+        linkAgentView.classList.remove('active');
+        linkAdminView.classList.remove('active');
+
+        // Hide all views
+        customerView.classList.add('hidden');
+        customerView.classList.remove('active');
+        agentView.classList.add('hidden');
+        agentView.classList.remove('active');
+        adminView.classList.add('hidden');
+        adminView.classList.remove('active');
+
+        if (view === 'agent') {
+            linkAgentView.classList.add('active');
+            agentView.classList.remove('hidden');
+            agentView.classList.add('active');
+            renderAgentTickets();
+            updateAgentDetailPanel();
+        } else if (view === 'admin') {
+            linkAdminView.classList.add('active');
+            adminView.classList.remove('hidden');
+            adminView.classList.add('active');
+            renderAdminTickets();
+            updateAdminDetailPanel();
         } else {
-            linkStaff.classList.add('active');
-            linkCustomer.classList.remove('active');
-            staffView.classList.add('active');
-            customerView.classList.remove('active');
-            renderStaffTickets();
+            linkCustomerView.classList.add('active');
+            customerView.classList.remove('hidden');
+            customerView.classList.add('active');
+            renderCustomerTickets();
         }
     }
 
     // ==========================================
-    // Submit Feedback Ticket
+    // Customer Portal Functions
     // ==========================================
     feedbackForm.addEventListener('submit', (e) => {
         e.preventDefault();
         
         if (!state.currentUser) {
-            showToast("Please log in to submit a ticket.");
+            showToast("Please login to submit feedback.");
             showAuthModal('login');
             return;
         }
@@ -376,99 +487,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast(`Ticket #${newTicket.id} submitted successfully!`);
     });
 
-    // ==========================================
-    // Save Changes & Update Status (Staff Actions)
-    // ==========================================
-    btnUpdateTicket.addEventListener('click', () => {
-        if (!state.selectedTicketId) return;
-
-        const ticketIndex = state.tickets.findIndex(t => t.id === state.selectedTicketId);
-        if (ticketIndex === -1) return;
-
-        const ticket = state.tickets[ticketIndex];
-        const oldStatus = ticket.status;
-        const newStatus = actionStatus.value;
-        const newAssignee = actionAssignee.value || null;
-        const notes = actionNotes.value.trim() || `Status updated by ${state.currentUser.username}.`;
-
-        const statusChanged = oldStatus !== newStatus;
-        const assigneeChanged = ticket.assignee !== newAssignee;
-
-        if (!statusChanged && !assigneeChanged) {
-            showToast("No changes detected.");
-            return;
-        }
-
-        // Update Properties
-        ticket.status = newStatus;
-        ticket.assignee = newAssignee;
-        ticket.updatedAt = new Date().toISOString();
-
-        // History Log
-        ticket.history.push({
-            oldStatus: oldStatus,
-            newStatus: newStatus,
-            notes: notes + (assigneeChanged ? ` (Assignee: ${newAssignee || 'Unassigned'})` : ''),
-            actionBy: state.currentUser.username,
-            timestamp: new Date().toISOString()
-        });
-
-        saveTickets();
-        actionNotes.value = "";
-        showToast(`Workflow updated for Ticket #${ticket.id}`);
-
-        if (linkStaff.classList.contains('active')) {
-            renderStaffTickets();
-        } else {
-            renderCustomerTickets();
-        }
-        updateDetailPanel();
-    });
-
-    // ==========================================
-    // Customer Actions (Confirm Resolution / Reopen)
-    // ==========================================
-    btnCustomerFixed.addEventListener('click', () => {
-        transitionTicketStatusByCustomer("CLOSED", "Fix confirmed by customer. Closed.");
-    });
-
-    btnCustomerReopen.addEventListener('click', () => {
-        transitionTicketStatusByCustomer("REOPENED", "Customer reported issue is not resolved. Reopened.");
-    });
-
-    function transitionTicketStatusByCustomer(targetStatus, notes) {
-        if (!state.selectedTicketId) return;
-
-        const ticketIndex = state.tickets.findIndex(t => t.id === state.selectedTicketId);
-        if (ticketIndex === -1) return;
-
-        const ticket = state.tickets[ticketIndex];
-        const oldStatus = ticket.status;
-
-        ticket.status = targetStatus;
-        ticket.updatedAt = new Date().toISOString();
-        ticket.history.push({
-            oldStatus: oldStatus,
-            newStatus: targetStatus,
-            notes: notes,
-            actionBy: state.currentUser ? state.currentUser.username : "Customer",
-            timestamp: new Date().toISOString()
-        });
-
-        saveTickets();
-        showToast(`Status updated to ${targetStatus}`);
-
-        if (linkCustomer.classList.contains('active')) {
-            renderCustomerTickets();
-        } else {
-            renderStaffTickets();
-        }
-        updateDetailPanel();
-    }
-
-    // ==========================================
-    // Rendering Functions
-    // ==========================================
     function renderCustomerTickets() {
         customerTicketsList.innerHTML = "";
 
@@ -476,7 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
             customerTicketsList.innerHTML = `
                 <div class="empty-state">
                     <i class="fa-solid fa-user-lock empty-icon"></i>
-                    <p>Please login to view your feedback tickets.</p>
+                    <p>Please login to view your submitted feedback tickets.</p>
                 </div>
             `;
             return;
@@ -517,26 +535,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
             card.addEventListener('click', () => {
                 state.selectedTicketId = ticket.id;
-                document.querySelectorAll('.ticket-card').forEach(el => el.classList.remove('selected'));
-                card.classList.add('selected');
-                updateDetailPanel();
+                openCustomerTicketModal(ticket);
             });
 
             customerTicketsList.appendChild(card);
         });
     }
 
-    function renderStaffTickets() {
-        staffTicketsTbody.innerHTML = "";
+    function openCustomerTicketModal(ticket) {
+        custModalTicketId.textContent = `#TKT-${ticket.id}`;
+        custModalTicketStatus.textContent = ticket.status.replace('_', ' ');
+        custModalTicketStatus.className = `badge ${getStatusBadgeClass(ticket.status)}`;
+        custModalTicketTitle.textContent = ticket.title;
+        custModalTicketCategory.textContent = ticket.category;
+        custModalTicketPriority.textContent = ticket.priority;
+        custModalTicketAgent.textContent = ticket.assignee || "Unassigned";
+        custModalTicketDesc.textContent = ticket.description;
+
+        if (ticket.status === "RESOLVED") {
+            custModalVerifyBox.classList.remove('hidden');
+        } else {
+            custModalVerifyBox.classList.add('hidden');
+        }
+
+        renderTimelineIntoContainer(ticket.history, custModalTimeline);
+        customerTicketModal.classList.remove('hidden');
+    }
+
+    if (btnCustConfirmClose) {
+        btnCustConfirmClose.addEventListener('click', () => {
+            transitionTicketStatusByCustomer("CLOSED", "Fix confirmed by customer. Ticket closed.");
+        });
+    }
+
+    if (btnCustReopen) {
+        btnCustReopen.addEventListener('click', () => {
+            transitionTicketStatusByCustomer("REOPENED", "Customer reported issue not fixed. Reopened.");
+        });
+    }
+
+    function transitionTicketStatusByCustomer(targetStatus, notes) {
+        if (!state.selectedTicketId) return;
+
+        const ticketIndex = state.tickets.findIndex(t => t.id === state.selectedTicketId);
+        if (ticketIndex === -1) return;
+
+        const ticket = state.tickets[ticketIndex];
+        const oldStatus = ticket.status;
+
+        ticket.status = targetStatus;
+        ticket.updatedAt = new Date().toISOString();
+        ticket.history.push({
+            oldStatus: oldStatus,
+            newStatus: targetStatus,
+            notes: notes,
+            actionBy: state.currentUser ? state.currentUser.username : "Customer",
+            timestamp: new Date().toISOString()
+        });
+
+        saveTickets();
+        customerTicketModal.classList.add('hidden');
+        showToast(`Ticket #${ticket.id} status updated to ${targetStatus}`);
+        renderCustomerTickets();
+    }
+
+    // ==========================================
+    // Agent Workspace Functions & Escalation
+    // ==========================================
+    if (agentFilterStatus) {
+        agentFilterStatus.addEventListener('change', renderAgentTickets);
+    }
+
+    function renderAgentTickets() {
+        agentTicketsTbody.innerHTML = "";
         
-        const filterVal = staffFilterStatus.value;
+        const filterVal = agentFilterStatus ? agentFilterStatus.value : "ALL";
         const filteredTickets = state.tickets.filter(t => filterVal === "ALL" || t.status === filterVal);
 
         if (filteredTickets.length === 0) {
-            staffTicketsTbody.innerHTML = `
+            agentTicketsTbody.innerHTML = `
                 <tr>
                     <td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">
-                        No tickets matching the filter in the queue.
+                        No tickets matching the filter in agent queue.
                     </td>
                 </tr>
             `;
@@ -557,7 +637,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><span class="badge ${catBadge}">${ticket.category}</span></td>
                 <td><span class="badge ${priBadge}">${ticket.priority}</span></td>
                 <td><span class="badge ${statusBadge}">${ticket.status.replace('_', ' ')}</span></td>
-                <td><span>${ticket.assignee || '<em>Unassigned</em>'}</span></td>
+                <td><span>${ticket.customer}</span></td>
                 <td>
                     <button class="btn btn-blue btn-sm">
                         <i class="fa-solid fa-magnifying-glass"></i> Inspect
@@ -567,53 +647,253 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tr.addEventListener('click', () => {
                 state.selectedTicketId = ticket.id;
-                document.querySelectorAll('#staff-tickets-tbody tr').forEach(el => el.classList.remove('selected'));
+                document.querySelectorAll('#agent-tickets-tbody tr').forEach(el => el.classList.remove('selected'));
                 tr.classList.add('selected');
-                updateDetailPanel();
+                updateAgentDetailPanel();
             });
 
-            staffTicketsTbody.appendChild(tr);
+            agentTicketsTbody.appendChild(tr);
         });
     }
 
-    function updateDetailPanel() {
+    function updateAgentDetailPanel() {
         if (!state.selectedTicketId) {
-            emptyDetailMsg.classList.remove('hidden');
-            detailContent.classList.add('hidden');
+            agentEmptyDetailMsg.classList.remove('hidden');
+            agentDetailContent.classList.add('hidden');
             return;
         }
 
         const ticket = state.tickets.find(t => t.id === state.selectedTicketId);
         if (!ticket) return;
 
-        emptyDetailMsg.classList.add('hidden');
-        detailContent.classList.remove('hidden');
+        agentEmptyDetailMsg.classList.add('hidden');
+        agentDetailContent.classList.remove('hidden');
 
-        detailTicketId.textContent = `#TKT-${ticket.id}`;
-        detailTicketTitle.textContent = ticket.title;
-        detailTicketDesc.textContent = ticket.description;
-        detailTicketCategory.textContent = ticket.category;
-        detailTicketPriority.textContent = ticket.priority;
-        detailTicketDate.textContent = new Date(ticket.createdAt).toLocaleString();
+        agentDetailTicketId.textContent = `#TKT-${ticket.id}`;
+        agentDetailTicketTitle.textContent = ticket.title;
+        agentDetailTicketDesc.textContent = ticket.description;
+        agentDetailTicketCategory.textContent = ticket.category;
+        agentDetailTicketPriority.textContent = ticket.priority;
+        agentDetailTicketCustomer.textContent = ticket.customer;
 
-        detailTicketStatus.textContent = ticket.status.replace('_', ' ');
-        detailTicketStatus.className = `badge ${getStatusBadgeClass(ticket.status)}`;
+        agentDetailTicketStatus.textContent = ticket.status.replace('_', ' ');
+        agentDetailTicketStatus.className = `badge ${getStatusBadgeClass(ticket.status)}`;
 
-        actionStatus.value = ticket.status;
-        actionAssignee.value = ticket.assignee || "";
-
-        // Check if verify panel should show
-        if (ticket.status === "RESOLVED") {
-            customerVerifyBox.classList.remove('hidden');
-        } else {
-            customerVerifyBox.classList.add('hidden');
-        }
-
-        renderTimeline(ticket.history);
+        agentActionStatus.value = ticket.status === "ESCALATED" ? "UNDER_REVIEW" : ticket.status;
+        renderTimelineIntoContainer(ticket.history, agentTimelineList);
     }
 
-    function renderTimeline(historyList) {
-        timelineList.innerHTML = "";
+    if (btnAgentUpdateTicket) {
+        btnAgentUpdateTicket.addEventListener('click', () => {
+            if (!state.selectedTicketId) return;
+
+            const ticketIndex = state.tickets.findIndex(t => t.id === state.selectedTicketId);
+            if (ticketIndex === -1) return;
+
+            const ticket = state.tickets[ticketIndex];
+            const oldStatus = ticket.status;
+            const newStatus = agentActionStatus.value;
+            const notes = agentActionNotes.value.trim() || `Agent update by ${state.currentUser.username}`;
+
+            if (oldStatus === newStatus && !agentActionNotes.value.trim()) {
+                showToast("No changes detected.");
+                return;
+            }
+
+            ticket.status = newStatus;
+            ticket.updatedAt = new Date().toISOString();
+            if (!ticket.assignee) ticket.assignee = state.currentUser.username;
+
+            ticket.history.push({
+                oldStatus: oldStatus,
+                newStatus: newStatus,
+                notes: notes,
+                actionBy: state.currentUser.username,
+                timestamp: new Date().toISOString()
+            });
+
+            saveTickets();
+            agentActionNotes.value = "";
+            showToast(`Agent updated Ticket #${ticket.id}`);
+            renderAgentTickets();
+            updateAgentDetailPanel();
+        });
+    }
+
+    // ESCALATE FEATURE FOR AGENTS
+    if (btnAgentEscalateTicket) {
+        btnAgentEscalateTicket.addEventListener('click', () => {
+            if (!state.selectedTicketId) return;
+
+            const ticketIndex = state.tickets.findIndex(t => t.id === state.selectedTicketId);
+            if (ticketIndex === -1) return;
+
+            const ticket = state.tickets[ticketIndex];
+            const oldStatus = ticket.status;
+            const userReason = agentActionNotes.value.trim() || "Agent requested high-priority escalation to Supervisor/Admin.";
+
+            ticket.status = "ESCALATED";
+            ticket.priority = "URGENT";
+            ticket.isEscalated = true;
+            ticket.updatedAt = new Date().toISOString();
+
+            ticket.history.push({
+                oldStatus: oldStatus,
+                newStatus: "ESCALATED",
+                notes: `⚡ ESCALATED TO SUPERVISOR: ${userReason}`,
+                actionBy: state.currentUser.username,
+                timestamp: new Date().toISOString()
+            });
+
+            saveTickets();
+            agentActionNotes.value = "";
+            showToast(`⚡ Ticket #${ticket.id} escalated to Supervisor/Admin!`);
+            renderAgentTickets();
+            updateAgentDetailPanel();
+        });
+    }
+
+    // ==========================================
+    // Admin & Supervisor Dashboard Functions
+    // ==========================================
+    if (adminFilterStatus) {
+        adminFilterStatus.addEventListener('change', renderAdminTickets);
+    }
+
+    function renderAdminTickets() {
+        adminTicketsTbody.innerHTML = "";
+
+        // Update Stats Bar
+        const total = state.tickets.length;
+        const escalated = state.tickets.filter(t => t.status === "ESCALATED" || t.priority === "URGENT" || t.isEscalated).length;
+        const unassigned = state.tickets.filter(t => !t.assignee).length;
+        const resolved = state.tickets.filter(t => t.status === "RESOLVED" || t.status === "CLOSED").length;
+
+        statTotalTickets.textContent = total;
+        statEscalatedTickets.textContent = escalated;
+        statUnassignedTickets.textContent = unassigned;
+        statResolvedTickets.textContent = resolved;
+
+        const filterVal = adminFilterStatus ? adminFilterStatus.value : "ALL";
+        const filteredTickets = state.tickets.filter(t => {
+            if (filterVal === "ALL") return true;
+            if (filterVal === "ESCALATED") return t.status === "ESCALATED" || t.priority === "URGENT" || t.isEscalated;
+            return t.status === filterVal;
+        });
+
+        if (filteredTickets.length === 0) {
+            adminTicketsTbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">
+                        No tickets matching administrative filter criteria.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        filteredTickets.forEach(ticket => {
+            const tr = document.createElement('tr');
+            if (state.selectedTicketId === ticket.id) tr.className = "selected";
+
+            const catBadge = getCategoryBadgeClass(ticket.category);
+            const priBadge = getPriorityBadgeClass(ticket.priority);
+            const statusBadge = getStatusBadgeClass(ticket.status);
+
+            tr.innerHTML = `
+                <td>#${ticket.id}</td>
+                <td><strong>${escapeHTML(ticket.title)}</strong></td>
+                <td><span class="badge ${catBadge}">${ticket.category}</span></td>
+                <td><span class="badge ${priBadge}">${ticket.priority}</span></td>
+                <td><span class="badge ${statusBadge}">${ticket.status.replace('_', ' ')}</span></td>
+                <td><span>${ticket.assignee ? `<strong>${ticket.assignee}</strong>` : '<em>Unassigned</em>'}</span></td>
+                <td>
+                    <button class="btn btn-blue btn-sm">
+                        <i class="fa-solid fa-sliders"></i> Manage
+                    </button>
+                </td>
+            `;
+
+            tr.addEventListener('click', () => {
+                state.selectedTicketId = ticket.id;
+                document.querySelectorAll('#admin-tickets-tbody tr').forEach(el => el.classList.remove('selected'));
+                tr.classList.add('selected');
+                updateAdminDetailPanel();
+            });
+
+            adminTicketsTbody.appendChild(tr);
+        });
+    }
+
+    function updateAdminDetailPanel() {
+        if (!state.selectedTicketId) {
+            adminEmptyDetailMsg.classList.remove('hidden');
+            adminDetailContent.classList.add('hidden');
+            return;
+        }
+
+        const ticket = state.tickets.find(t => t.id === state.selectedTicketId);
+        if (!ticket) return;
+
+        adminEmptyDetailMsg.classList.add('hidden');
+        adminDetailContent.classList.remove('hidden');
+
+        adminDetailTicketId.textContent = `#TKT-${ticket.id}`;
+        adminDetailTicketTitle.textContent = ticket.title;
+        adminDetailTicketDesc.textContent = ticket.description;
+        adminDetailTicketCategory.textContent = ticket.category;
+        adminDetailTicketPriority.textContent = ticket.priority;
+        adminDetailTicketCustomer.textContent = ticket.customer;
+
+        adminDetailTicketStatus.textContent = ticket.status.replace('_', ' ');
+        adminDetailTicketStatus.className = `badge ${getStatusBadgeClass(ticket.status)}`;
+
+        adminActionAssignee.value = ticket.assignee || "";
+        adminActionPriority.value = ticket.priority;
+        adminActionStatus.value = ticket.status;
+
+        renderTimelineIntoContainer(ticket.history, adminTimelineList);
+    }
+
+    if (btnAdminUpdateTicket) {
+        btnAdminUpdateTicket.addEventListener('click', () => {
+            if (!state.selectedTicketId) return;
+
+            const ticketIndex = state.tickets.findIndex(t => t.id === state.selectedTicketId);
+            if (ticketIndex === -1) return;
+
+            const ticket = state.tickets[ticketIndex];
+            const oldStatus = ticket.status;
+            const newStatus = adminActionStatus.value;
+            const newPriority = adminActionPriority.value;
+            const newAssignee = adminActionAssignee.value || null;
+            const notes = adminActionNotes.value.trim() || `Admin update by ${state.currentUser.username}`;
+
+            ticket.status = newStatus;
+            ticket.priority = newPriority;
+            ticket.assignee = newAssignee;
+            ticket.updatedAt = new Date().toISOString();
+
+            ticket.history.push({
+                oldStatus: oldStatus,
+                newStatus: newStatus,
+                notes: `Admin change (Priority: ${newPriority}, Agent: ${newAssignee || 'Unassigned'}). ${notes}`,
+                actionBy: state.currentUser.username,
+                timestamp: new Date().toISOString()
+            });
+
+            saveTickets();
+            adminActionNotes.value = "";
+            showToast(`Admin changes applied to Ticket #${ticket.id}`);
+            renderAdminTickets();
+            updateAdminDetailPanel();
+        });
+    }
+
+    // Timeline renderer helper
+    function renderTimelineIntoContainer(historyList, containerEl) {
+        if (!containerEl) return;
+        containerEl.innerHTML = "";
         const reversedHistory = [...historyList].reverse();
 
         reversedHistory.forEach(item => {
@@ -635,20 +915,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 ${item.notes ? `<div class="timeline-notes">${escapeHTML(item.notes)}</div>` : ''}
             `;
-            timelineList.appendChild(itemDiv);
+            containerEl.appendChild(itemDiv);
         });
     }
 
-    // ==========================================
-    // Filter trigger
-    // ==========================================
-    staffFilterStatus.addEventListener('change', () => {
-        renderStaffTickets();
-    });
-
-    // ==========================================
     // Helper utilities
-    // ==========================================
     function saveTickets() {
         localStorage.setItem('resolveflow_tickets', JSON.stringify(state.tickets));
     }
@@ -679,6 +950,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'UNDER_REVIEW': return 'badge-review';
             case 'ASSIGNED': return 'badge-assigned';
             case 'INVESTIGATING': return 'badge-investigating';
+            case 'ESCALATED': return 'badge-escalated';
             case 'RESOLVED': return 'badge-resolved';
             case 'CLOSED': return 'badge-closed';
             case 'REOPENED': return 'badge-reopened';
@@ -733,8 +1005,8 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(toastStyle);
 
-    // Initial setups
-    updateAuthHeader();
-    renderCustomerTickets();
+    // Initial setup
+    applyRolePermissions();
+    switchView('customer');
 
 });

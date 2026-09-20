@@ -30,17 +30,20 @@
                 <span class="brand-name">ResolveFlow</span>
             </div>
             
-            <nav class="nav-links">
-                <a href="#" id="link-customer" class="nav-link active">Customer Portal</a>
-                <a href="#" id="link-staff" class="nav-link">Staff Workspace</a>
-                <a href="/api/health" target="_blank" class="nav-link">System Health</a>
+            <nav class="nav-links" id="main-nav-links">
+                <a href="#" id="link-customer-view" class="nav-link active"><i class="fa-solid fa-user-pen"></i> Customer Portal</a>
+                <a href="#" id="link-agent-view" class="nav-link hidden"><i class="fa-solid fa-user-gear"></i> Agent Workspace</a>
+                <a href="#" id="link-admin-view" class="nav-link hidden"><i class="fa-solid fa-shield-halved"></i> Admin Dashboard</a>
+                <a href="/api/health" target="_blank" class="nav-link"><i class="fa-solid fa-heart-pulse"></i> System Health</a>
             </nav>
 
             <div class="nav-actions" id="nav-auth-actions">
+                <button id="btn-guide-trigger" class="btn btn-outline btn-sm"><i class="fa-solid fa-circle-question"></i> User Guide</button>
                 <button id="btn-login-trigger" class="btn-text">Login</button>
                 <button id="btn-signup-trigger" class="btn btn-blue">Sign Up</button>
             </div>
             <div class="nav-actions hidden" id="nav-user-actions">
+                <button id="btn-guide-user-trigger" class="btn btn-outline btn-sm"><i class="fa-solid fa-circle-question"></i> User Guide</button>
                 <span class="user-badge"><i class="fa-solid fa-user-circle"></i> <span id="current-user-name">User</span></span>
                 <button id="btn-logout" class="btn btn-outline btn-sm">Logout</button>
             </div>
@@ -107,8 +110,8 @@
                     <!-- Form Card -->
                     <div class="card form-card">
                         <div class="card-header">
-                            <h2>Submit New Feedback</h2>
-                            <p>Tell us how we can help. Your issue will be assigned and resolved by our staff.</p>
+                            <h2><i class="fa-solid fa-paper-plane text-blue"></i> Submit New Feedback</h2>
+                            <p>Tell us how we can help. Your issue will be assigned and resolved by support staff.</p>
                         </div>
                         <form id="feedback-form" class="standard-form">
                             <div class="form-group">
@@ -149,10 +152,10 @@
                         </form>
                     </div>
 
-                    <!-- List Card -->
+                    <!-- List Card for Customer -->
                     <div class="card list-card">
                         <div class="card-header">
-                            <h2>Your Submitted Tickets</h2>
+                            <h2><i class="fa-solid fa-ticket text-blue"></i> Your Submitted Tickets</h2>
                             <p>Track progress and confirm resolutions below.</p>
                         </div>
                         <div class="ticket-list-wrapper">
@@ -167,32 +170,187 @@
                 </div>
             </section>
 
-            <!-- STAFF WORKSPACE VIEW -->
-            <section id="staff-view" class="view-section">
+            <!-- AGENT WORKSPACE VIEW -->
+            <section id="agent-view" class="view-section hidden">
+                <div class="role-banner banner-agent">
+                    <div class="banner-icon"><i class="fa-solid fa-user-gear"></i></div>
+                    <div>
+                        <h2>Agent Support Workspace</h2>
+                        <p>Manage assigned feedback tickets, update status, and escalate high-priority issues to supervisors.</p>
+                    </div>
+                </div>
+
                 <div class="staff-dashboard-grid">
-                    
                     <!-- Ticket Queue Table -->
                     <div class="card staff-list-card">
                         <div class="card-header flex-header">
                             <div>
-                                <h2>Active Ticket Queue</h2>
-                                <p>Manage, assign, and escalate feedback.</p>
+                                <h2>Assigned & Review Queue</h2>
+                                <p>Select a ticket to investigate or update status.</p>
                             </div>
                             <div class="filter-controls">
-                                <select id="staff-filter-status" class="select-sm">
+                                <select id="agent-filter-status" class="select-sm">
                                     <option value="ALL">All Statuses</option>
+                                    <option value="CREATED">Created</option>
+                                    <option value="UNDER_REVIEW">Under Review</option>
+                                    <option value="ASSIGNED">Assigned</option>
+                                    <option value="INVESTIGATING">Investigating</option>
+                                    <option value="ESCALATED">Escalated</option>
+                                    <option value="RESOLVED">Resolved</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="standard-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Subject</th>
+                                        <th>Category</th>
+                                        <th>Priority</th>
+                                        <th>Status</th>
+                                        <th>Customer</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="agent-tickets-tbody">
+                                    <!-- Dynamic agent rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Inspection & Action Details Panel for Agent -->
+                    <div class="card detail-card" id="agent-detail-panel">
+                        <div class="empty-detail-state" id="agent-empty-detail-msg">
+                            <i class="fa-solid fa-hand-pointer detail-icon"></i>
+                            <h3>Select a ticket from the queue to view details, update status, and log progress.</h3>
+                        </div>
+
+                        <div id="agent-detail-content" class="hidden">
+                            <div class="detail-header">
+                                <div class="detail-id-section">
+                                    <span class="detail-id" id="agent-detail-ticket-id">#TKT-1</span>
+                                    <span class="badge" id="agent-detail-ticket-status">CREATED</span>
+                                </div>
+                                <h2 id="agent-detail-ticket-title">Ticket Subject</h2>
+                                <div class="detail-meta">
+                                    <span><i class="fa-solid fa-folder"></i> <strong id="agent-detail-ticket-category">TECHNICAL</strong></span>
+                                    <span><i class="fa-solid fa-triangle-exclamation"></i> <strong id="agent-detail-ticket-priority">MEDIUM</strong></span>
+                                    <span><i class="fa-solid fa-user"></i> <strong id="agent-detail-ticket-customer">Customer</strong></span>
+                                </div>
+                            </div>
+
+                            <hr class="separator">
+
+                            <div class="detail-body">
+                                <h3>Customer Description</h3>
+                                <p id="agent-detail-ticket-desc">Description text...</p>
+                            </div>
+
+                            <hr class="separator">
+
+                            <!-- Agent Workflow Operations -->
+                            <div class="detail-actions">
+                                <h3>Agent Workflow Actions</h3>
+                                <div class="form-group">
+                                    <label for="agent-action-status">Transition Status</label>
+                                    <select id="agent-action-status">
+                                        <option value="UNDER_REVIEW">Under Review</option>
+                                        <option value="INVESTIGATING">Investigating</option>
+                                        <option value="RESOLVED">Resolved (Fixed)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="agent-action-notes">Internal Resolution / Audit Notes</label>
+                                    <textarea id="agent-action-notes" rows="2" placeholder="Write internal updates or resolution details..."></textarea>
+                                </div>
+                                <div class="action-button-bar-row">
+                                    <button id="btn-agent-update-ticket" class="btn btn-blue btn-flex">
+                                        <i class="fa-solid fa-floppy-disk"></i> Update Status & Log Notes
+                                    </button>
+                                    <button id="btn-agent-escalate-ticket" class="btn btn-danger btn-flex btn-escalate">
+                                        <i class="fa-solid fa-bolt"></i> Escalate to Supervisor
+                                    </button>
+                                </div>
+                            </div>
+
+                            <hr class="separator">
+
+                            <div class="detail-timeline">
+                                <h3>Audit & Escalation History</h3>
+                                <div class="timeline-container" id="agent-timeline-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ADMIN & SUPERVISOR DASHBOARD VIEW -->
+            <section id="admin-view" class="view-section hidden">
+                <div class="role-banner banner-admin">
+                    <div class="banner-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div>
+                        <h2>Admin & Supervisor Management Dashboard</h2>
+                        <p>Global system overview: assign support agents, manage escalations, and monitor ticket resolution SLA.</p>
+                    </div>
+                </div>
+
+                <!-- Admin Summary Stats Bar -->
+                <div class="admin-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fa-solid fa-ticket"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-total-tickets">0</span>
+                            <span class="stat-label">Total Tickets</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-escalated-tickets">0</span>
+                            <span class="stat-label">Escalated Tickets</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon yellow"><i class="fa-solid fa-clock"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-unassigned-tickets">0</span>
+                            <span class="stat-label">Unassigned Tickets</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-resolved-tickets">0</span>
+                            <span class="stat-label">Resolved / Closed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="staff-dashboard-grid">
+                    <!-- Global Queue Table -->
+                    <div class="card staff-list-card">
+                        <div class="card-header flex-header">
+                            <div>
+                                <h2>Global Ticket Management Queue</h2>
+                                <p>All user submissions across the organization.</p>
+                            </div>
+                            <div class="filter-controls">
+                                <select id="admin-filter-status" class="select-sm">
+                                    <option value="ALL">All Statuses</option>
+                                    <option value="ESCALATED">⚠️ Escalated Only</option>
                                     <option value="CREATED">Created</option>
                                     <option value="UNDER_REVIEW">Under Review</option>
                                     <option value="ASSIGNED">Assigned</option>
                                     <option value="INVESTIGATING">Investigating</option>
                                     <option value="RESOLVED">Resolved</option>
                                     <option value="CLOSED">Closed</option>
-                                    <option value="REOPENED">Reopened</option>
                                 </select>
                             </div>
                         </div>
                         <div class="table-container">
-                            <table class="standard-table" id="staff-tickets-table">
+                            <table class="standard-table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
@@ -204,31 +362,31 @@
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="staff-tickets-tbody">
-                                    <!-- Dynamic rows will go here -->
+                                <tbody id="admin-tickets-tbody">
+                                    <!-- Dynamic admin rows -->
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Inspection Details Panel -->
-                    <div class="card detail-card" id="detail-panel">
-                        <div class="empty-detail-state" id="empty-detail-msg">
-                            <i class="fa-solid fa-circle-info detail-icon"></i>
-                            <h3>Select a ticket from the queue to view full description, assign staff, and update workflow status.</h3>
+                    <!-- Admin Inspection & Reassignment Panel -->
+                    <div class="card detail-card" id="admin-detail-panel">
+                        <div class="empty-detail-state" id="admin-empty-detail-msg">
+                            <i class="fa-solid fa-sliders detail-icon"></i>
+                            <h3>Select a ticket from the queue for admin assignment & priority management.</h3>
                         </div>
 
-                        <div id="detail-content" class="hidden">
+                        <div id="admin-detail-content" class="hidden">
                             <div class="detail-header">
                                 <div class="detail-id-section">
-                                    <span class="detail-id" id="detail-ticket-id">#TKT-1</span>
-                                    <span class="badge" id="detail-ticket-status">CREATED</span>
+                                    <span class="detail-id" id="admin-detail-ticket-id">#TKT-1</span>
+                                    <span class="badge" id="admin-detail-ticket-status">CREATED</span>
                                 </div>
-                                <h2 id="detail-ticket-title">Billing issue regarding invoice</h2>
+                                <h2 id="admin-detail-ticket-title">Ticket Subject</h2>
                                 <div class="detail-meta">
-                                    <span><i class="fa-solid fa-folder"></i> <strong id="detail-ticket-category">BILLING</strong></span>
-                                    <span><i class="fa-solid fa-triangle-exclamation"></i> <strong id="detail-ticket-priority">HIGH</strong></span>
-                                    <span><i class="fa-solid fa-clock"></i> <strong id="detail-ticket-date">Just now</strong></span>
+                                    <span><i class="fa-solid fa-folder"></i> <strong id="admin-detail-ticket-category">TECHNICAL</strong></span>
+                                    <span><i class="fa-solid fa-triangle-exclamation"></i> <strong id="admin-detail-ticket-priority">HIGH</strong></span>
+                                    <span><i class="fa-solid fa-user"></i> Customer: <strong id="admin-detail-ticket-customer">alice</strong></span>
                                 </div>
                             </div>
 
@@ -236,18 +394,18 @@
 
                             <div class="detail-body">
                                 <h3>Description</h3>
-                                <p id="detail-ticket-desc">I was double charged on my invoice. Please check.</p>
+                                <p id="admin-detail-ticket-desc">Description text...</p>
                             </div>
 
                             <hr class="separator">
 
-                            <!-- Workflow operations -->
+                            <!-- Admin Operations -->
                             <div class="detail-actions">
-                                <h3>Workflow Operations</h3>
+                                <h3>Admin Controls</h3>
                                 <div class="action-grid">
                                     <div class="form-group">
-                                        <label for="action-assignee">Assign Agent / Staff</label>
-                                        <select id="action-assignee">
+                                        <label for="admin-action-assignee">Assign Support Agent</label>
+                                        <select id="admin-action-assignee">
                                             <option value="">Unassigned</option>
                                             <option value="Agent Smith">Agent Smith (Technical)</option>
                                             <option value="Jane Doe">Jane Doe (Billing)</option>
@@ -255,55 +413,44 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="action-status">Transition Status</label>
-                                        <select id="action-status">
-                                            <option value="CREATED">Created</option>
-                                            <option value="UNDER_REVIEW">Under Review</option>
-                                            <option value="ASSIGNED">Assigned</option>
-                                            <option value="INVESTIGATING">Investigating</option>
-                                            <option value="RESOLVED">Resolved</option>
-                                            <option value="CLOSED">Closed</option>
-                                            <option value="REOPENED">Reopened</option>
+                                        <label for="admin-action-priority">Override Priority</label>
+                                        <select id="admin-action-priority">
+                                            <option value="LOW">Low</option>
+                                            <option value="MEDIUM">Medium</option>
+                                            <option value="HIGH">High</option>
+                                            <option value="URGENT">Urgent (Escalated)</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="action-notes">Internal Logs / Updates Notes</label>
-                                    <textarea id="action-notes" rows="2" placeholder="Explain the changes or actions taken..."></textarea>
+                                    <label for="admin-action-status">Override Status</label>
+                                    <select id="admin-action-status">
+                                        <option value="CREATED">Created</option>
+                                        <option value="UNDER_REVIEW">Under Review</option>
+                                        <option value="ASSIGNED">Assigned</option>
+                                        <option value="INVESTIGATING">Investigating</option>
+                                        <option value="ESCALATED">Escalated</option>
+                                        <option value="RESOLVED">Resolved</option>
+                                        <option value="CLOSED">Closed</option>
+                                    </select>
                                 </div>
-                                <div class="action-button-bar">
-                                    <button id="btn-update-ticket" class="btn btn-blue btn-full">
-                                        <i class="fa-solid fa-floppy-disk"></i> Save Changes & Log History
-                                    </button>
+                                <div class="form-group">
+                                    <label for="admin-action-notes">Admin Audit Note</label>
+                                    <textarea id="admin-action-notes" rows="2" placeholder="Reason for admin override / assignment..."></textarea>
                                 </div>
-                            </div>
-
-                            <!-- Customer confirmation Action -->
-                            <div id="customer-verify-box" class="customer-verify-panel hidden">
-                                <h4><i class="fa-solid fa-user-check"></i> Customer Feedback Resolution Check</h4>
-                                <p>As a customer, is this issue fixed to your satisfaction?</p>
-                                <div class="verify-buttons">
-                                    <button id="btn-customer-fixed" class="btn btn-success">
-                                        <i class="fa-solid fa-check"></i> Yes, Fix Confirmed (Close Ticket)
-                                    </button>
-                                    <button id="btn-customer-reopen" class="btn btn-danger">
-                                        <i class="fa-solid fa-arrow-rotate-left"></i> No, Reopen Ticket
-                                    </button>
-                                </div>
+                                <button id="btn-admin-update-ticket" class="btn btn-blue btn-full">
+                                    <i class="fa-solid fa-floppy-disk"></i> Apply Admin Changes & Audit Log
+                                </button>
                             </div>
 
                             <hr class="separator">
 
-                            <!-- Audit Timeline -->
                             <div class="detail-timeline">
-                                <h3>Audit & Escalation Log Timeline</h3>
-                                <div class="timeline-container" id="timeline-list">
-                                    <!-- Dynamic logs go here -->
-                                </div>
+                                <h3>Full System Audit Trail</h3>
+                                <div class="timeline-container" id="admin-timeline-list"></div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </section>
 
@@ -361,6 +508,130 @@
                     Create Free Account
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- USER GUIDE / INSTRUCTIONS MODAL -->
+    <div id="instructions-modal" class="modal-overlay hidden">
+        <div class="modal-card modal-lg">
+            <button class="close-modal-btn" id="btn-close-instructions"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header-guide">
+                <i class="fa-solid fa-book-open guide-icon"></i>
+                <div>
+                    <h2>ResolveFlow User Guide & Instructions</h2>
+                    <p>Complete guide on how to navigate, submit feedback, and manage escalations.</p>
+                </div>
+            </div>
+
+            <div class="guide-grid">
+                <!-- Guide Step 1 -->
+                <div class="guide-card">
+                    <div class="guide-card-header">
+                        <span class="guide-step-num">1</span>
+                        <h3>Getting Started & Roles</h3>
+                    </div>
+                    <ul class="guide-list">
+                        <li><strong>Register / Login:</strong> Click <em>Login / Sign Up</em> to create an account or switch user roles.</li>
+                        <li><strong>Customer Role:</strong> Used by end users to submit complaints, feature requests, or billing queries.</li>
+                        <li><strong>Agent Role:</strong> Used by support representatives to inspect tickets, write resolution logs, and resolve issues.</li>
+                        <li><strong>Supervisor / Admin:</strong> Used to manage agent assignments, prioritize ticket queues, and track audit trails.</li>
+                    </ul>
+                </div>
+
+                <!-- Guide Step 2 -->
+                <div class="guide-card">
+                    <div class="guide-card-header">
+                        <span class="guide-step-num">2</span>
+                        <h3>Submitting & Tracking Feedback</h3>
+                    </div>
+                    <ul class="guide-list">
+                        <li><strong>Fill Out Form:</strong> Enter Subject, Category (<em>Technical, Billing, Product, etc.</em>), and Priority level.</li>
+                        <li><strong>Submit:</strong> Click <em>Submit Feedback</em>. Your request enters the system queue immediately.</li>
+                        <li><strong>Track Status:</strong> Monitor your ticket under <em>Your Submitted Tickets</em>. View real-time assigned staff and status.</li>
+                        <li><strong>Close or Reopen:</strong> Confirm resolution when resolved, or click <em>Reopen Ticket</em> if issue persists.</li>
+                    </ul>
+                </div>
+
+                <!-- Guide Step 3 -->
+                <div class="guide-card">
+                    <div class="guide-card-header">
+                        <span class="guide-step-num">3</span>
+                        <h3>Staff Escalation & Workspace</h3>
+                    </div>
+                    <ul class="guide-list">
+                        <li><strong>Queue Filtering:</strong> Filter active tickets by Status (<em>Created, Under Review, Assigned, Investigating, Resolved</em>).</li>
+                        <li><strong>Agent Assignment:</strong> Assign tickets to specific support agents (e.g. Agent Smith, Billing Support).</li>
+                        <li><strong>Transition Status:</strong> Update status as work progresses. Every status change logs an immutable audit trail.</li>
+                        <li><strong>Internal Log Notes:</strong> Write internal progress notes to maintain a full history.</li>
+                    </ul>
+                </div>
+
+                <!-- Guide Step 4 -->
+                <div class="guide-card">
+                    <div class="guide-card-header">
+                        <span class="guide-step-num">4</span>
+                        <h3>System Connection & Ports</h3>
+                    </div>
+                    <ul class="guide-list">
+                        <li><strong>Server Port:</strong> Backend runs on <code>http://localhost:3000</code>.</li>
+                        <li><strong>Authentication:</strong> Uses JWT Token stored securely in browser session.</li>
+                        <li><strong>REST API:</strong> Direct endpoints at <code>/api/auth</code> and <code>/api/feedback</code>.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="guide-footer-action">
+                <button id="btn-guide-got-it" class="btn btn-blue btn-lg"><i class="fa-solid fa-check"></i> Got It! Start Using ResolveFlow</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOMER TICKET INSPECTION MODAL -->
+    <div id="customer-ticket-modal" class="modal-overlay hidden">
+        <div class="modal-card modal-lg">
+            <button class="close-modal-btn" id="btn-close-customer-modal"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="detail-header">
+                <div class="detail-id-section">
+                    <span class="detail-id" id="cust-modal-ticket-id">#TKT-1</span>
+                    <span class="badge" id="cust-modal-ticket-status">CREATED</span>
+                </div>
+                <h2 id="cust-modal-ticket-title">Ticket Title</h2>
+                <div class="detail-meta">
+                    <span><i class="fa-solid fa-folder"></i> Category: <strong id="cust-modal-ticket-category">TECHNICAL</strong></span>
+                    <span><i class="fa-solid fa-triangle-exclamation"></i> Priority: <strong id="cust-modal-ticket-priority">MEDIUM</strong></span>
+                    <span><i class="fa-solid fa-user-gear"></i> Assigned Agent: <strong id="cust-modal-ticket-agent">Unassigned</strong></span>
+                </div>
+            </div>
+
+            <hr class="separator">
+
+            <div class="detail-body">
+                <h3>Your Submitted Description</h3>
+                <p id="cust-modal-ticket-desc">Detailed issue description...</p>
+            </div>
+
+            <hr class="separator">
+
+            <!-- Customer Confirmation Panel -->
+            <div id="cust-modal-verify-box" class="customer-verify-panel hidden">
+                <h4><i class="fa-solid fa-user-check"></i> Feedback Resolution Check</h4>
+                <p>Support staff has marked this ticket as Resolved. Has your issue been resolved?</p>
+                <div class="verify-buttons">
+                    <button id="btn-cust-confirm-close" class="btn btn-success">
+                        <i class="fa-solid fa-check"></i> Confirm Fix & Close Ticket
+                    </button>
+                    <button id="btn-cust-reopen" class="btn btn-danger">
+                        <i class="fa-solid fa-arrow-rotate-left"></i> Issue Not Fixed (Reopen)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Audit History for Customer -->
+            <div class="detail-timeline">
+                <h3>Ticket Audit & Activity Timeline</h3>
+                <div class="timeline-container" id="cust-modal-timeline"></div>
+            </div>
         </div>
     </div>
 

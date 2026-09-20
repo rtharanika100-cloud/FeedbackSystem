@@ -7,5 +7,6 @@ public enum FeedbackStatus {
     INVESTIGATING,
     RESOLVED,
     CLOSED,
-    REOPENED
+    REOPENED,
+    ESCALATED
 }

@@ -1,13 +1,13 @@
-// ResolveFlow Feedback & Escalation System Logic
+// Escavo Feedback & Escalation System Logic
 
 document.addEventListener('DOMContentLoaded', () => {
     
     // Core Application State (persisted via localStorage)
     let state = {
-        tickets: JSON.parse(localStorage.getItem('resolveflow_tickets')) || [],
+        tickets: JSON.parse(localStorage.getItem('escavo_tickets') || localStorage.getItem('resolveflow_tickets')) || [],
         selectedTicketId: null,
-        token: localStorage.getItem('resolveflow_token') || null,
-        currentUser: JSON.parse(localStorage.getItem('resolveflow_user')) || null
+        token: localStorage.getItem('escavo_token') || localStorage.getItem('resolveflow_token') || null,
+        currentUser: JSON.parse(localStorage.getItem('escavo_user') || localStorage.getItem('resolveflow_user')) || null
     };
 
     // Initialize mock tickets if empty
@@ -288,8 +288,8 @@ document.addEventListener('DOMContentLoaded', () => {
         state.token = token;
         state.currentUser = { username, role };
         
-        localStorage.setItem('resolveflow_token', token);
-        localStorage.setItem('resolveflow_user', JSON.stringify(state.currentUser));
+        localStorage.setItem('escavo_token', token);
+        localStorage.setItem('escavo_user', JSON.stringify(state.currentUser));
 
         hideAuthModal();
         applyRolePermissions();
@@ -308,6 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
     btnLogout.addEventListener('click', () => {
         state.token = null;
         state.currentUser = null;
+        localStorage.removeItem('escavo_token');
+        localStorage.removeItem('escavo_user');
         localStorage.removeItem('resolveflow_token');
         localStorage.removeItem('resolveflow_user');
         
@@ -921,7 +923,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper utilities
     function saveTickets() {
-        localStorage.setItem('resolveflow_tickets', JSON.stringify(state.tickets));
+        localStorage.setItem('escavo_tickets', JSON.stringify(state.tickets));
     }
 
     function getCategoryBadgeClass(category) {

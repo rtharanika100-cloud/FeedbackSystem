@@ -1,12 +1,12 @@
 Hi Viewer 👋,
 
-Welcome to **ResolveFlow** — a premium, dynamic Feedback & Escalation Portal designed to connect customers and support staff seamlessly. Below you will find all the details regarding the application's architecture, database schema, tech stack, and system workflows.
+Welcome to **Escavo** — a premium, dynamic Feedback & Escalation Portal designed to connect customers and support staff seamlessly. Below you will find all the details regarding the application's architecture, database schema, tech stack, and system workflows.
 
 ---
 
 ## 1. Description
 
-**ResolveFlow** is a modern, responsive web application built to streamline the lifecycle of feedback submission and escalation management. 
+**Escavo** is a modern, responsive web application built to streamline the lifecycle of feedback submission and escalation management. 
 
 - **Customer Portal**: Allows users to sign up, submit feedback with custom categories and severity levels, and track the status of their requests.
 - **Staff Workspace**: Empowers support agents and supervisors to view active queues, assign agents, transition ticket statuses, and log audit trails.
@@ -62,7 +62,7 @@ erDiagram
 
 ## 3. Techstacks
 
-ResolveFlow leverages a modern, robust, and performant tech stack across both frontend and backend layers:
+Escavo leverages a modern, robust, and performant tech stack across both frontend and backend layers:
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
@@ -77,11 +77,11 @@ ResolveFlow leverages a modern, robust, and performant tech stack across both fr
 
 ## 4. How the System Works (Navigatable Diagram Flow)
 
-Here is how users navigate and interact with ResolveFlow:
+Here is how users navigate and interact with Escavo:
 
 ```mermaid
 flowchart TD
-    Start([User opens ResolveFlow]) --> SessionCheck{Has Valid JWT Token?}
+    Start([User opens Escavo]) --> SessionCheck{Has Valid JWT Token?}
     
     %% Auth Flow
     SessionCheck -- No --> AuthModal[Show Auth Modal]
@@ -178,7 +178,7 @@ When you open [http://localhost:3000](http://localhost:3000):
 
 ## 6. End
 
-Thank you for exploring the **ResolveFlow** codebase! If you have any questions or ideas for improvements, feel free to open a ticket or reach out to the development team. 
+Thank you for exploring the **Escavo** codebase! If you have any questions or ideas for improvements, feel free to open a ticket or reach out to the development team. 
 
 Happy resolving! 🚀
 
